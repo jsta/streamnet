@@ -1,10 +1,11 @@
 Package: streamnet
-Title: What the Package Does (one line, title case)
+Title: Morphology Analysis of Stream Networks 
 Version: 0.1
 Authors@R: person("Joseph", "Stachelek", role = c("aut", "cre"), 
  email = "stachel2@msu.edu")
-Description: What the package does (one paragraph).
+Description: Morphology analysis of stream networks. 
 Depends: R (>= 3.4.1)
+Imports: nhdR, igraph, rgrass7sf, sf
 License: GPL
 Encoding: UTF-8
 LazyData: true
