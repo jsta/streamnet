@@ -13,5 +13,6 @@ create_reversed_tree(node_n)
 Create a reversed tree igraph object
 }
 \examples{
-create_reversed_tree(5)
+tree <- create_reversed_tree(11)
+plot(tree, layout = igraph::layout_as_tree(tree, mode = "in"))
 }

@@ -12,3 +12,7 @@ igraph2sf(ig_network)
 \description{
 Convert an igraph object to sf
 }
+\examples{
+tree <- create_reversed_tree(9)
+tree_sf <- igraph2sf(tree)
+}
