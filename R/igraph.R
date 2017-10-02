@@ -7,7 +7,8 @@ sf2igraph <- function(sf_lines){
 #'
 #' @param ig_network igraph network
 #'
-#' @importFrom sf st_as_sf
+#' @importFrom sf st_as_sf st_multilinestring
+#' @importFrom igraph as_data_frame
 #' @export
 #' @examples
 #' tree <- create_reversed_tree(9)
@@ -20,30 +21,21 @@ igraph2sf <- function(ig_network){
   res[,1:2] <- apply(res[,1:2] * 10 + abs(min(res[,1:2])) * 10, 2, as.integer)
   res$name <- igraph::V(ig_network)$name
 
-  edge_matrix <- as_data_frame(ig_network, what = "edges")
-
-  # lapply(t(edge_matrix), function(x) {
-  #   rbind(,
-  #         res[res$name == x[2], c("x", "y")])
-  # })
-
+  edge_matrix <- igraph::as_data_frame(ig_network, what = "edges")
   ordered_vertices <- lapply(t(edge_matrix),
-                        function(x) res[res$name %in% x, c("x", "y")])
+                    function(x) res[res$name %in% x, c("x", "y")])
+
   by_twos <- cbind(
     seq(1, length(ordered_vertices), by = 2),
     seq(2, length(ordered_vertices), by = 2))
 
-  # mls <- st_sfc(
-    mls <- st_multilinestring(
-    apply(by_twos, 1, function(x) rbind(ordered_vertices[[x[1]]],
-                                        ordered_vertices[[x[2]]])))
-    # )
+  # browser()
+  mls <- lapply(1:nrow(by_twos),
+                function(x) as.matrix(rbind(
+                  ordered_vertices[[by_twos[x,][1]]],
+                  ordered_vertices[[by_twos[x,][2]]])))
 
-  mls
-
-  (plot(st_multilinestring(list(rbind(c(10,40),c(20,50)), rbind(c(30,40),c(20,50))))))
-  # res <- sf::st_as_sf(res, coords = c("x", "y"))
-  # res
+  sf::st_multilinestring(mls)
 }
 
 
