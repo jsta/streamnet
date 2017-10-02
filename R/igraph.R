@@ -11,8 +11,10 @@ sf2igraph <- function(sf_lines){
 #' @importFrom igraph as_data_frame
 #' @export
 #' @examples
-#' tree <- create_reversed_tree(9)
+#' library(sf)
+#' tree <- create_reversed_tree(15)
 #' tree_sf <- igraph2sf(tree)
+#' plot(tree_sf)
 igraph2sf <- function(ig_network){
   # ig_network <- tree
 
