@@ -16,7 +16,8 @@ function should be used in most cases.
 \examples{
 \dontrun{
 tree <- create_reversed_tree(15)
-E(tree)$weight <- stream_order_igraph(tree)
-plot(tree, edge.label = E(tree)$weight)
+igraph::E(tree)$weight <- stream_order_igraph(tree)
+plot(tree, edge.width = igraph::E(tree)$weight,
+         layout = layout_as_tree(tree, mode = "in"))
 }
 }

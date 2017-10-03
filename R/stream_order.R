@@ -85,7 +85,8 @@ stream_order <- function(lines, outlet, ...){
 #' @examples \dontrun{
 #' tree <- create_reversed_tree(15)
 #' igraph::E(tree)$weight <- stream_order_igraph(tree)
-#' plot(tree, edge.label = igraph::E(tree)$weight)
+#' plot(tree, edge.width = igraph::E(tree)$weight,
+#'          layout = layout_as_tree(tree, mode = "in"))
 #' }
 stream_order_igraph <- function(tree){
   base_order <- 1
