@@ -2,7 +2,7 @@
 % Please edit documentation in R/stream_order.R
 \name{stream_order}
 \alias{stream_order}
-\title{stream_order}
+\title{Calculate stream order with GRASS}
 \usage{
 stream_order(lines, outlet, ...)
 }
@@ -14,7 +14,7 @@ stream_order(lines, outlet, ...)
 \item{...}{options passed to rgrass7sf::initGRASS}
 }
 \description{
-Calculate stream order
+Calculate stream order with GRASS
 }
 \examples{
 \dontrun{

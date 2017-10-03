@@ -1,9 +1,23 @@
+#' Convert sf lines to an igraph object
+#'
+#' @param sf_lines
+#'
+#' @export
+#'
+#' @examples
+#' tree <- create_reversed_tree(15)
+#' tree_sf <- igraph2sf(tree)
+#' tree <- sf2igraph(tree_sf)
 sf2igraph <- function(sf_lines){
 
+  test <- graph_from_edgelist(cbind(1:10, c(2:10, 1)))
+
+  browser()
+  igraph::graph_from_edgelist()
 
 }
 
-#' Convert an igraph object to sf
+#' Convert an igraph object to sf lines
 #'
 #' @param ig_network igraph network
 #'
@@ -11,13 +25,10 @@ sf2igraph <- function(sf_lines){
 #' @importFrom igraph as_data_frame
 #' @export
 #' @examples
-#' library(sf)
 #' tree <- create_reversed_tree(15)
 #' tree_sf <- igraph2sf(tree)
 #' plot(tree_sf)
 igraph2sf <- function(ig_network){
-  # ig_network <- tree
-
   res <- data.frame(igraph::layout_as_tree(ig_network, mode = "in"))
   names(res) <- c("x", "y")
   res[,1:2] <- apply(res[,1:2] * 10 + abs(min(res[,1:2])) * 10, 2, as.integer)
@@ -31,7 +42,6 @@ igraph2sf <- function(ig_network){
     seq(1, length(ordered_vertices), by = 2),
     seq(2, length(ordered_vertices), by = 2))
 
-  # browser()
   mls <- lapply(1:nrow(by_twos),
                 function(x) as.matrix(rbind(
                   ordered_vertices[[by_twos[x,][1]]],
