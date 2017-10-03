@@ -16,3 +16,31 @@ stream_order(lines, outlet, ...)
 \description{
 Calculate stream order
 }
+\examples{
+\dontrun{
+library(nhdR)
+library(sf)
+library(dplyr)
+library(mapview)
+
+bbox <- data.frame(xmin = -73.33838, ymin = 41.32841,
+                   xmax = -73.14540, ymax = 41.66593)
+b0 <- sf::st_sfc(sf::st_polygon(list(rbind(
+    c(bbox$xmin, bbox$ymin),
+    c(bbox$xmax, bbox$ymin),
+    c(bbox$xmax, bbox$ymax),
+    c(bbox$xmin, bbox$ymax),
+    c(bbox$xmin, bbox$ymin)))))
+sf::st_crs(b0) <- 4326
+b0 <- st_transform(b0, st_crs(nhdR::vpu_shp))
+
+nhd <- nhd_plus_query(poly = b0, dsn = c("NHDWaterbody", "NHDFlowLine"))
+
+outlet <- st_cast(st_line_sample(
+              dplyr::filter(nhd$sp$NHDFlowLine, COMID == "7718342"),
+          sample = 1), "POINT")
+
+res <- stream_order(lines = nhd$sp$NHDFlowLine, outlet = outlet)
+mapview(res, zcol = "strahler")
+}
+}
