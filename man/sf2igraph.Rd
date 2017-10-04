@@ -4,7 +4,7 @@
 \alias{sf2igraph}
 \title{Convert sf lines to an igraph object}
 \usage{
-sf2igraph(sf_lines)
+sf2igraph(sf_lines, tolerance = 1)
 }
 \arguments{
 \item{sf_lines}{}
@@ -13,7 +13,10 @@ sf2igraph(sf_lines)
 Convert sf lines to an igraph object
 }
 \examples{
-tree <- create_reversed_tree(15)
+tree    <- create_reversed_tree(15)
 tree_sf <- igraph2sf(tree)
-tree <- sf2igraph(tree_sf)
+tree    <- sf2igraph(tree_sf, tolerance = 1)
+plot(tree$tree,
+     edge.width = tree$weights,
+     layout = igraph::layout_as_tree(tree$tree, mode = "in"))
 }
