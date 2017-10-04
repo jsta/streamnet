@@ -5,32 +5,19 @@
 #' @param ... options passed to rgrass7sf::initGRASS
 #'
 #' @importFrom rgrass7sf initGRASS execGRASS gmeta readVECT writeVECT
+#' @importFrom sf st_crs
 #' @export
 #'
 #' @examples \dontrun{
-#' library(nhdR)
-#' library(sf)
-#' library(dplyr)
 #' library(mapview)
 #'
-#' bbox <- data.frame(xmin = -73.33838, ymin = 41.32841,
-#'                    xmax = -73.14540, ymax = 41.66593)
-#' b0 <- sf::st_sfc(sf::st_polygon(list(rbind(
-#'     c(bbox$xmin, bbox$ymin),
-#'     c(bbox$xmax, bbox$ymin),
-#'     c(bbox$xmax, bbox$ymax),
-#'     c(bbox$xmin, bbox$ymax),
-#'     c(bbox$xmin, bbox$ymin)))))
-#' sf::st_crs(b0) <- 4326
-#' b0 <- st_transform(b0, st_crs(nhdR::vpu_shp))
-#'
-#' nhd <- nhd_plus_query(poly = b0, dsn = c("NHDWaterbody", "NHDFlowLine"))
+#' data(nhd_sub)
 #'
 #' outlet <- st_cast(st_line_sample(
-#'               dplyr::filter(nhd$sp$NHDFlowLine, COMID == "7718342"),
+#'               dplyr::filter(nhd_sub, COMID == "7718342"),
 #'           sample = 1), "POINT")
 #'
-#' res <- stream_order(lines = nhd$sp$NHDFlowLine, outlet = outlet)
+#' res <- stream_order(lines = nhd_sub, outlet = outlet)
 #' mapview(res, zcol = "strahler")
 #'}
 stream_order <- function(lines, outlet, ...){
@@ -46,7 +33,7 @@ stream_order <- function(lines, outlet, ...){
   Sys.setenv(GRASS_PROJSHARE = paste(Sys.getenv("GISBASE"),
                                      "\\proj", sep=""))
 
-  proj4 <- st_crs(lines)$proj4string
+  proj4 <- sf::st_crs(lines)$proj4string
 
   rgrass7sf::execGRASS("g.proj", flags = c("c"),
             parameters = list(

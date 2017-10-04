@@ -7,7 +7,10 @@
 sf2igraph(sf_lines, tolerance = 1)
 }
 \arguments{
-\item{sf_lines}{}
+\item{sf_lines}{sf lines object}
+
+\item{tolerance}{numeric snapping distance for lines
+to be considered connected}
 }
 \description{
 Convert sf lines to an igraph object

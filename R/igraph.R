@@ -1,6 +1,8 @@
 #' Convert sf lines to an igraph object
 #'
-#' @param sf_lines
+#' @param sf_lines sf lines object
+#' @param tolerance numeric snapping distance for lines
+#' to be considered connected
 #'
 #' @importFrom sf st_sfc st_cast st_length st_line_sample
 #' st_coordinates st_distance
