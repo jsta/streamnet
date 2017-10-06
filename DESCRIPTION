@@ -5,8 +5,8 @@ Authors@R: person("Joseph", "Stachelek", role = c("aut", "cre"),
  email = "stachel2@msu.edu")
 Description: Morphology analysis of stream networks. 
 Depends: R (>= 3.4.1)
-Imports: nhdR, igraph, rgrass7sf, sf, dplyr
-Suggest: mapview
+Imports: nhdR, igraph, rgrass7sf, sf, dplyr, spnetwork, sp, units
+Suggest: mapview, riverdist
 License: GPL
 Encoding: UTF-8
 LazyData: true

@@ -22,4 +22,13 @@ tree    <- sf2igraph(tree_sf, tolerance = 1)
 plot(tree$tree,
      edge.width = tree$weights,
      layout = igraph::layout_as_tree(tree$tree, mode = "in"))
+
+\dontrun{
+data(nhd_sub)
+tree <- sf2igraph(nhd_sub)
+plot(tree$tree,
+     edge.width = tree$weights,
+     layout = igraph::layout_as_tree(tree$tree, mode = "in"))
+
+}
 }

@@ -7,6 +7,7 @@
 #' @importFrom sf st_sfc st_cast st_length st_line_sample
 #' st_coordinates st_distance
 #' @importFrom igraph E graph_from_edgelist "E<-"
+#' @importFrom units set_units
 #' @export
 #'
 #' @examples
@@ -16,12 +17,36 @@
 #' plot(tree$tree,
 #'      edge.width = tree$weights,
 #'      layout = igraph::layout_as_tree(tree$tree, mode = "in"))
+#'
+#' \dontrun{
+#' data(nhd_sub)
+#' tree <- sf2igraph(nhd_sub)
+#' plot(tree$tree,
+#'      edge.width = tree$weights,
+#'      layout = igraph::layout_as_tree(tree$tree, mode = "in"))
+#'
+#' }
 sf2igraph <- function(sf_lines, tolerance = 1){
 
-  sf_lines_split <- st_cast(st_sfc(sf_lines), "LINESTRING")
+  if("sfg" %in% class(sf_lines)){
+    sf_lines <- st_sfc(sf_lines)
+  }
 
-  sf_lines_be <- lapply(sf_lines_split, function(x)
-    st_cast(st_line_sample(x, sample = c(0, 1)), "POINT"))
+  if(all(st_geometry_type(sf_lines) == "MULTILINESTRING")){
+    sf_lines_split <- st_cast(sf_lines, "LINESTRING")
+  }else{
+    sf_lines_split <- sf_lines
+  }
+
+  sf_lines_be <- list()
+  for(i in seq_len(nrow(sf_lines_split))){
+
+    sf_lines_be[[i]] <- st_cast(sf::st_line_sample(sf_lines_split[i,],
+                                       sample = c(0, 1)), "POINT")
+  }
+
+  # sf_lines_be <- lapply(sf_lines_split, function(x)
+  #   st_cast(st_line_sample(x, sample = c(0, 1)), "POINT"))
 
   sf_lines_starts <- do.call(rbind,
                              lapply(sf_lines_be, function(x)
@@ -31,25 +56,42 @@ sf2igraph <- function(sf_lines, tolerance = 1){
                              st_coordinates(x[2])))
 
   sf_lines_starts <- suppressWarnings(st_as_sf(data.frame(sf_lines_starts),
-                              coords = c("X", "Y")))
+                              coords = c("X", "Y"),
+                              crs = sf::st_crs(sf_lines)))
   sf_lines_ends   <- suppressWarnings(st_as_sf(data.frame(sf_lines_ends),
-                              coords = c("X", "Y")))
+                              coords = c("X", "Y"),
+                              crs = sf::st_crs(sf_lines)))
 
   # look for ends that are close to starts
-  dist_mat_raw   <- st_distance(sf_lines_starts, sf_lines_ends)
-  dist_mat       <- which(dist_mat_raw < tolerance, arr.ind = TRUE)[,c(2, 1)]
-  terminal_edges <- which(colSums(dist_mat_raw > 1) == ncol(dist_mat_raw))
-  dist_mat       <- rbind(
-    t(sapply(terminal_edges,
-             function(x) cbind(x, ncol(dist_mat_raw) + 1))), dist_mat)
+  dist_mat_raw <- st_distance(sf_lines_starts, sf_lines_ends)
+  dist_mat     <- which(dist_mat_raw < units::set_units(tolerance, "m"),
+                        arr.ind = TRUE)[,c(2, 1)]
+
+  # add terminal edges to dist_mat ####
+  # terminal_edges  <- which(
+  #   colSums(dist_mat_raw > units::set_units(tolerance, "m"))
+  #                     == ncol(dist_mat_raw))
+  #
+  # overlapping_ends  <- which(
+  #   sapply(sf::st_is_within_distance(sf_lines_ends,
+  #                             sf_lines_ends,
+  #                             dist = 0.000001), function(x)
+  #                               length(x)) > 1)
+  # terminal_edges[terminal_edges %in% overlapping_ends]
+
+  # dist_mat       <- rbind(
+  #     t(sapply(terminal_edges,
+  #              function(x) cbind(x, ncol(dist_mat_raw) + 1))), dist_mat)
+
 
   # test <- st_sf(st_sfc(sf_lines_split))
   # test$id <- factor(1:nrow(test))
   # ggplot() + geom_sf(data = test, aes(color = id))
 
-  weights <- suppressWarnings(sf::st_length(sf_lines_split))
+  weights <- suppressWarnings(sf::st_length(sf_lines_split))[
+    unique(dist_mat[,1])]
   tree <- igraph::graph_from_edgelist(dist_mat, directed = TRUE)
-  E(tree)$weight <- weights
+  E(tree)$weight <- c(weights) / max(weights)
 
   list(tree = tree, weights = weights)
 }
