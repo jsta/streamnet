@@ -6,6 +6,9 @@
 \usage{
 rvnet2sf(rvnet)
 }
+\arguments{
+\item{rvnet}{rivernetwork object from the riverdist package}
+}
 \description{
 Rivernetwork to sf object
 }

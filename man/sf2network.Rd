@@ -6,6 +6,19 @@
 \usage{
 sf2network(sf_lines)
 }
+\arguments{
+\item{sf_lines}{sf lines object}
+}
 \description{
 Convert sf to SpatialNetwork
+}
+\examples{
+\dontrun{
+# library(igraph)
+# library(sp)
+# library(mapview)
+data(nhd_sub)
+res <- sf2network(nhd_sub)
+plot(res@g)
+}
 }

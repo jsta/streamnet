@@ -19,9 +19,6 @@ Convert sf lines to an igraph object
 tree    <- create_reversed_tree(15)
 tree_sf <- igraph2sf(tree)
 tree    <- sf2igraph(tree_sf, tolerance = 1)
-plot(tree$tree,
-     edge.width = tree$weights,
-     layout = igraph::layout_as_tree(tree$tree, mode = "in"))
 
 \dontrun{
 data(nhd_sub)

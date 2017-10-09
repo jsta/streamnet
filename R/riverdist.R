@@ -1,5 +1,7 @@
 #' Rivernetwork to sf object
 #'
+#' @param rvnet rivernetwork object from the riverdist package
+#'
 #' @importFrom sf st_multilinestring st_sfc st_cast st_sf
 #'
 #' @export

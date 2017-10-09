@@ -5,7 +5,7 @@
 #' to be considered connected
 #'
 #' @importFrom sf st_sfc st_cast st_length st_line_sample
-#' st_coordinates st_distance
+#' st_coordinates st_distance st_geometry_type
 #' @importFrom igraph E graph_from_edgelist "E<-"
 #' @importFrom units set_units
 #' @export
@@ -14,9 +14,9 @@
 #' tree    <- create_reversed_tree(15)
 #' tree_sf <- igraph2sf(tree)
 #' tree    <- sf2igraph(tree_sf, tolerance = 1)
-#' plot(tree$tree,
-#'      edge.width = tree$weights,
-#'      layout = igraph::layout_as_tree(tree$tree, mode = "in"))
+# plot(tree$tree,
+#      edge.width = tree$weights,
+#      layout = igraph::layout_as_tree(tree$tree, mode = "in"))
 #'
 #' \dontrun{
 #' data(nhd_sub)
@@ -32,14 +32,17 @@ sf2igraph <- function(sf_lines, tolerance = 1){
     sf_lines <- st_sfc(sf_lines)
   }
 
-  if(all(st_geometry_type(sf_lines) == "MULTILINESTRING")){
+  if(all(sf::st_geometry_type(sf_lines) == "MULTILINESTRING")){
     sf_lines_split <- st_cast(sf_lines, "LINESTRING")
+    sf_length <- length(sf_lines_split)
+    sf_lines_split <- st_sf(sf_lines_split)
   }else{
     sf_lines_split <- sf_lines
+    sf_length <- nrow(sf_lines_split)
   }
 
   sf_lines_be <- list()
-  for(i in seq_len(nrow(sf_lines_split))){
+  for(i in seq_len(sf_length)){
 
     sf_lines_be[[i]] <- st_cast(sf::st_line_sample(sf_lines_split[i,],
                                        sample = c(0, 1)), "POINT")
@@ -64,7 +67,8 @@ sf2igraph <- function(sf_lines, tolerance = 1){
 
   # look for ends that are close to starts
   dist_mat_raw <- st_distance(sf_lines_starts, sf_lines_ends)
-  dist_mat     <- which(dist_mat_raw < units::set_units(tolerance, "m"),
+  dist_mat     <- which(units::set_units(dist_mat_raw, "m") <
+                        units::set_units(tolerance, "m"),
                         arr.ind = TRUE)[,c(2, 1)]
 
   # add terminal edges to dist_mat ####
