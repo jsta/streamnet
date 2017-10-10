@@ -2,7 +2,8 @@ Package: streamnet
 Title: Morphology Analysis of Stream Networks 
 Version: 0.1
 Authors@R: person("Joseph", "Stachelek", role = c("aut", "cre"), 
- email = "stachel2@msu.edu")
+ email = "stachel2@msu.edu", 
+ comment = c(ORCID = "0000-0002-5924-2464"))
 Description: Morphology analysis of stream networks. 
 Depends: R (>= 3.4.1)
 Imports: nhdR, igraph, rgrass7sf, sf, dplyr, spnetwork, sp, units, riverdist, methods

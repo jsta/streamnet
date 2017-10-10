@@ -4,10 +4,12 @@
 \alias{rvnet2sf}
 \title{Rivernetwork to sf object}
 \usage{
-rvnet2sf(rvnet)
+rvnet2sf(rvnet, crs)
 }
 \arguments{
 \item{rvnet}{rivernetwork object from the riverdist package}
+
+\item{crs}{crs string or epsg code}
 }
 \description{
 Rivernetwork to sf object
