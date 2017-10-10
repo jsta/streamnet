@@ -20,41 +20,8 @@ crs <- st_crs(nhd_sub)
 nhd_sub <- as(nhd_sub, "Spatial")
 
 nhd_sub <- riverdist::line2network(nhd_sub, tolerance = 1)
-# riverdist::cleanup(nhd_sub)
-nhd_sub <- riverdist::removeduplicates(rivers = nhd_sub)
-nhd_sub <- riverdist::dissolve(nhd_sub)
-nhd_sub <- removemicrosegs(nhd_sub)
+nhd_sub <- suppressMessages(autoclean(nhd_sub, mouthseg = 2, mouthvert = 3, crs = crs))
 
-nhd_sub <- setmouth(seg = as.numeric(2),
-                    vert = as.numeric(3),
-                    rivers = nhd_sub)
-
-checked <- takeout <- rep(F, length(nhd_sub$lines))
-while(!all(checked)) {
-  i <- which.min(checked)
-  theroute <- detectroute(end = nhd_sub$mouth$mouth.seg,
-                          start = i,
-                          rivers = nhd_sub,
-                          stopiferror = FALSE,
-                          algorithm = "Dijkstra")
-  if(is.na(theroute[1])) {
-    takeout[i] <- T
-    checked[i] <- T
-  }
-  else {
-    checked[theroute] <- T
-  }
-}
-takeout <- which(takeout)
-nhd_sub <- trimriver(rivers = nhd_sub, trim = takeout)
-
-# mapview(nhd_sub$sp)
-
-# outlet <- st_cast(st_line_sample(
-#               dplyr::filter(nhd_sub, COMID == "7718342"),
-#           sample = 1), "POINT")
-
-nhd_sub_geom <- st_cast(st_sfc(st_multilinestring(nhd_sub$lines)), "LINESTRING")
-nhd_sub <- st_sf(nhd_sub$lineID, geom = nhd_sub_geom, crs = crs)
+# mapview(nhd_sub)
 
 devtools::use_data(nhd_sub, overwrite = TRUE)
