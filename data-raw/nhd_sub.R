@@ -15,13 +15,17 @@ b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 
 nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))
 nhd_sub <- nhd$sp$NHDFlowLine
-# mapview(nhd_sub)
+# mapview::mapview(nhd_sub)
 crs <- st_crs(nhd_sub)
 nhd_sub <- as(nhd_sub, "Spatial")
 
 nhd_sub <- riverdist::line2network(nhd_sub, tolerance = 1)
-nhd_sub <- suppressMessages(autoclean(nhd_sub, mouthseg = 2, mouthvert = 3, crs = crs))
+# riverdist::showends(2, nhd_sub)
+nhd_sub <- suppressMessages(autoclean(nhd_sub,
+                                      mouthseg = 2,
+                                      mouthvert = 3,
+                                      crs = crs))
 
-# mapview(nhd_sub)
+# mapview::mapview(nhd_sub, zcol = "rivID")
 
 devtools::use_data(nhd_sub, overwrite = TRUE)
