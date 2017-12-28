@@ -24,3 +24,46 @@ You can install streamnet from github with:
 # install.packages("devtools")
 devtools::install_github("jsta/streamnet")
 ```
+
+## Usage
+
+```{r test_dataset}
+library(sf)
+library(ggplot2)
+library(nhdR)
+library(streamnet)
+
+# Generate test dataset
+bbox <- data.frame(xmin = -73.33838, ymin = 41.35841,
+                   xmax = -73.14540, ymax = 41.48593)
+b0 <- sf::st_sfc(sf::st_polygon(list(rbind(
+    c(bbox$xmin, bbox$ymin),
+    c(bbox$xmax, bbox$ymin),
+    c(bbox$xmax, bbox$ymax),
+    c(bbox$xmin, bbox$ymax),
+    c(bbox$xmin, bbox$ymin)))))
+sf::st_crs(b0) <- 4326
+b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
+
+nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
+```
+
+```{r grass_stream-order}
+
+# Calculate stream order with GRASS
+outlet <- terminal_reaches(
+                 lon = st_coordinates(st_centroid(b0))[1], 
+                 lat = st_coordinates(st_centroid(b0))[2])
+
+outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
+
+res <- stream_order(lines = nhd, outlet = outlet)
+
+coords <- st_coordinates(st_transform(outlet, 4326))
+poly <- nhd_plus_query(coords[1], coords[2], 
+                        dsn = "NHDWaterbody")$sp$NHDWaterbody
+
+ggplot() + 
+  geom_sf(data = poly, color = "white") +
+  geom_sf(data = res, aes(color = strahler))
+```
