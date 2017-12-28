@@ -18,6 +18,8 @@ devtools::install_github("jsta/streamnet")
 Usage
 -----
 
+<details> <summary>Generate test stream network</summary>
+
 ``` r
 library(sf)
 #> Linking to GEOS 3.5.1, GDAL 2.2.1, proj.4 4.9.2
@@ -49,7 +51,9 @@ nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
 #> proj4string:    +proj=longlat +datum=NAD83 +no_defs
 ```
 
-<details> <summary>Code</summary>
+</details>
+
+<details> <summary>Calculate Stream Order</summary>
 
 ``` r
 Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
@@ -87,12 +91,12 @@ outlet <- terminal_reaches(
 outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
 
 res <- stream_order(lines = nhd, outlet = outlet)
-#> Writing layer `testlines' to data source `/tmp/RtmpJPdrJ5/file1e656898994/PERMANENT/.tmp/josecomp/205.0' using driver `SQLite'
+#> Writing layer `testlines' to data source `/tmp/RtmpQgcMmm/file20883afad629/PERMANENT/.tmp/josecomp/361.0' using driver `SQLite'
 #> options:        LAUNDER=NO 
 #> features:       286
 #> fields:         14
 #> geometry type:  Line String
-#> Writing layer `testoutlet' to data source `/tmp/RtmpJPdrJ5/file1e656898994/PERMANENT/.tmp/josecomp/691.0' using driver `SQLite'
+#> Writing layer `testoutlet' to data source `/tmp/RtmpQgcMmm/file20883afad629/PERMANENT/.tmp/josecomp/966.0' using driver `SQLite'
 #> options:        LAUNDER=NO 
 #> features:       1
 #> fields:         1
@@ -104,7 +108,7 @@ res <- stream_order(lines = nhd, outlet = outlet)
 #>          cat_1 in output map
 #> WARNING: Column name conflict: Renaming column <cat> from input map into
 #>          cat_1 in output map
-#> Reading layer `test' from data source `/tmp/RtmpJPdrJ5/file1e656898994/PERMANENT/.tmp/josecomp/826.0' using driver `SQLite'
+#> Reading layer `test' from data source `/tmp/RtmpQgcMmm/file20883afad629/PERMANENT/.tmp/josecomp/167.0' using driver `SQLite'
 #> Simple feature collection with 276 features and 21 fields
 #> geometry type:  LINESTRING
 #> dimension:      XY

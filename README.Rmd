@@ -27,6 +27,9 @@ devtools::install_github("jsta/streamnet")
 
 ## Usage
 
+<details>
+ <summary>Generate test stream network</summary>
+
 ```{r test_dataset}
 library(sf)
 library(ggplot2)
@@ -45,21 +48,20 @@ b0 <- sf::st_sfc(sf::st_polygon(list(rbind(
 sf::st_crs(b0) <- 4326
 b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 
-nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
-```
-
-<details>
- <summary>Code</summary>
- 
-```{r grass_stream-order}
-Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
-
-# Calculate stream order with GRASS
 outlet <- terminal_reaches(
                  lon = st_coordinates(st_centroid(b0))[1], 
                  lat = st_coordinates(st_centroid(b0))[2])
-
 outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
+
+nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
+```
+</details>
+
+<details>
+ <summary>Calculate Stream Order</summary>
+ 
+```{r grass_stream-order}
+Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
 
 res <- stream_order(lines = nhd, outlet = outlet)
 
@@ -70,5 +72,13 @@ poly <- nhd_plus_query(coords[1], coords[2],
 ggplot() + 
   geom_sf(data = poly, color = "white") +
   geom_sf(data = res, aes(color = strahler))
+```
+</details>
+
+<details>
+  <summary>Calculate average link length</summary>
+
+```{r }  
+avg_link_length(lines = nhd)
 ```
 </details>
