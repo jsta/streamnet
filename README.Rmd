@@ -57,6 +57,8 @@ outlet <- terminal_reaches(
 
 outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
 
+Sys.setenv(GRASS_VERBOSE = -1)
+
 res <- stream_order(lines = nhd, outlet = outlet)
 
 coords <- st_coordinates(st_transform(outlet, 4326))
