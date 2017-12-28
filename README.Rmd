@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "inst/images/"
 )
 ```
 
@@ -48,7 +48,11 @@ b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
 ```
 
+<details>
+ <summary>Code</summary>
+ 
 ```{r grass_stream-order}
+Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
 
 # Calculate stream order with GRASS
 outlet <- terminal_reaches(
@@ -56,8 +60,6 @@ outlet <- terminal_reaches(
                  lat = st_coordinates(st_centroid(b0))[2])
 
 outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
-
-Sys.setenv(GRASS_VERBOSE = -1)
 
 res <- stream_order(lines = nhd, outlet = outlet)
 
@@ -69,3 +71,4 @@ ggplot() +
   geom_sf(data = poly, color = "white") +
   geom_sf(data = res, aes(color = strahler))
 ```
+</details>

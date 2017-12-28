@@ -49,7 +49,10 @@ nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
 #> proj4string:    +proj=longlat +datum=NAD83 +no_defs
 ```
 
+<details> <summary>Code</summary>
+
 ``` r
+Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
 
 # Calculate stream order with GRASS
 outlet <- terminal_reaches(
@@ -83,15 +86,13 @@ outlet <- terminal_reaches(
 
 outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
 
-Sys.setenv(GRASS_VERBOSE = -1)
-
 res <- stream_order(lines = nhd, outlet = outlet)
-#> Writing layer `testlines' to data source `/tmp/RtmpRiWr5G/file7b986fb9e242/PERMANENT/.tmp/josecomp/946.0' using driver `SQLite'
+#> Writing layer `testlines' to data source `/tmp/RtmpJPdrJ5/file1e656898994/PERMANENT/.tmp/josecomp/205.0' using driver `SQLite'
 #> options:        LAUNDER=NO 
 #> features:       286
 #> fields:         14
 #> geometry type:  Line String
-#> Writing layer `testoutlet' to data source `/tmp/RtmpRiWr5G/file7b986fb9e242/PERMANENT/.tmp/josecomp/40.0' using driver `SQLite'
+#> Writing layer `testoutlet' to data source `/tmp/RtmpJPdrJ5/file1e656898994/PERMANENT/.tmp/josecomp/691.0' using driver `SQLite'
 #> options:        LAUNDER=NO 
 #> features:       1
 #> fields:         1
@@ -103,7 +104,7 @@ res <- stream_order(lines = nhd, outlet = outlet)
 #>          cat_1 in output map
 #> WARNING: Column name conflict: Renaming column <cat> from input map into
 #>          cat_1 in output map
-#> Reading layer `test' from data source `/tmp/RtmpRiWr5G/file7b986fb9e242/PERMANENT/.tmp/josecomp/174.0' using driver `SQLite'
+#> Reading layer `test' from data source `/tmp/RtmpJPdrJ5/file1e656898994/PERMANENT/.tmp/josecomp/826.0' using driver `SQLite'
 #> Simple feature collection with 276 features and 21 fields
 #> geometry type:  LINESTRING
 #> dimension:      XY
@@ -131,4 +132,4 @@ ggplot() +
   geom_sf(data = res, aes(color = strahler))
 ```
 
-![](README-grass_stream-order-1.png)
+![](inst/images/grass_stream-order-1.png) </details>

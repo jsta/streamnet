@@ -35,20 +35,22 @@ stream_order <- function(lines, outlet, ...){
 
   proj4 <- sf::st_crs(lines)$proj4string
 
-  rgrass7sf::execGRASS("g.proj", flags = c("c"),
+  rgrass7sf::execGRASS("g.proj", flags = c("c", "quiet"),
             parameters = list(
               proj4 = proj4
             ))
 
-  rgrass7sf::gmeta()
+  rgrass7sf::gmeta(ignore.stderr = TRUE)
 
   lines <- lines[,!duplicated(tolower(names(lines)))]
   # lines <- lines[!(is.na(lines$ToNode) & is.na(lines$FromNode)),]
 
   rgrass7sf::writeVECT(lines, "testlines"  ,
-                       v.in.ogr_flags = c("o", "overwrite"))
+                       v.in.ogr_flags = c("o", "overwrite"),
+                       ignore.stderr = TRUE)
   rgrass7sf::writeVECT(outlet, "testoutlet",
-                       v.in.ogr_flags = c("o", "overwrite"))
+                       v.in.ogr_flags = c("o", "overwrite"),
+                       ignore.stderr = TRUE)
 
   rgrass7sf::execGRASS("v.stream.order",
             parameters = list(
@@ -58,7 +60,7 @@ stream_order <- function(lines, outlet, ...){
             ),
             flags = c("quiet"))
 
-  rgrass7sf::readVECT("test")
+  rgrass7sf::readVECT("test", ignore.stderr = TRUE)
 }
 
 #' Calculate stream order with igraph
