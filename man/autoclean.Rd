@@ -18,3 +18,9 @@ autoclean(rivernetwork, mouthseg, mouthvert, crs)
 \description{
 Automatically clean a rivernetwork object
 }
+\examples{
+\dontrun{
+mouthseg  <- which(nhd$COMID == outlet_reach$comid)
+res <- autoclean(nhd_rv, mouthseg, mouthvert, crs = st_crs(nhd))
+}
+}

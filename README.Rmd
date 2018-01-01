@@ -50,7 +50,8 @@ b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 
 outlet_reach <- terminal_reaches(
                  lon = st_coordinates(st_centroid(b0))[1], 
-                 lat = st_coordinates(st_centroid(b0))[2])
+                 lat = st_coordinates(st_centroid(b0))[2], 
+                 approve_all_dl = TRUE)
 outlet_point <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
 
 nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine

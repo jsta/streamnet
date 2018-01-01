@@ -6,6 +6,8 @@
 #'
 #' @importFrom rgrass7sf initGRASS execGRASS gmeta readVECT writeVECT
 #' @importFrom sf st_crs
+#' @importFrom raster raster extent
+#' @importFrom sp SpatialLines
 #' @export
 #'
 #' @examples \dontrun{
@@ -22,9 +24,13 @@
 #'}
 stream_order <- function(lines, outlet, ...){
 
+  lines_sp <- as(lines, "Spatial")
+  lines_r <- as(raster::raster(raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
+
   rgrass7sf:: initGRASS(gisBase = "/usr/lib/grass72/",
             home = tempdir(),
-            override = TRUE)
+            override = TRUE,
+            SG = lines_r)
 
   rgrass7sf::execGRASS("g.mapset", flags = c("quiet"),
             parameters = list(
