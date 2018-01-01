@@ -19,9 +19,16 @@ rvnet2sf <- function(rvnet, crs){
 #' @param mouthvert integer
 #' @param crs crs string or epsg code
 #'
-#' @importFrom riverdist removeduplicates dissolve removemicrosegs setmouth trimriver detectroute
+#' @importFrom riverdist removeduplicates dissolve removemicrosegs setmouth trimriver detectroute riverdirection
 #' @export
+#' @examples \dontrun{
+#' mouthseg  <- which(nhd$COMID == outlet_reach$comid)
+#  mouthvert <- 1
+#  nhd_rv <- riverdist::line2network(as(nhd, "Spatial"), tolerance = 1)
+#' res <- autoclean(nhd_rv, mouthseg, mouthvert, crs = st_crs(nhd))
+#' }
 autoclean <- function(rivernetwork, mouthseg, mouthvert, crs){
+
   rivernetwork <- riverdist::removeduplicates(rivers = rivernetwork)
   rivernetwork <- riverdist::dissolve(rivernetwork)
   rivernetwork <- removemicrosegs(rivernetwork)
@@ -31,7 +38,7 @@ autoclean <- function(rivernetwork, mouthseg, mouthvert, crs){
                            rivers = rivernetwork)
 
   # sequence taken from riverdist::clean ####
-  checked <- takeout <- rep(F, length(rivernetwork$lines))
+  checked <- takeout <- below_mouth <- rep(F, length(rivernetwork$lines))
   while(!all(checked)) {
     i <- which.min(checked)
     theroute <- detectroute(end = rivernetwork$mouth$mouth.seg,
@@ -39,6 +46,7 @@ autoclean <- function(rivernetwork, mouthseg, mouthvert, crs){
                             rivers = rivernetwork,
                             stopiferror = FALSE,
                             algorithm = "Dijkstra")
+
     if(is.na(theroute[1])) {
       takeout[i] <- T
       checked[i] <- T
@@ -47,8 +55,31 @@ autoclean <- function(rivernetwork, mouthseg, mouthvert, crs){
       checked[theroute] <- T
     }
   }
+
   takeout <- which(takeout)
   rivernetwork <- trimriver(rivers = rivernetwork, trim = takeout)
+
+  # remove segments downstream of mouth ####
+  # checked <- below_mouth <- rep(F, length(rivernetwork$lines))
+  #
+  # while(!all(checked)) {
+  #   i <- which.min(checked)
+  #   (check_upstream <- riverdist::riverdirection(startseg = rivernetwork$mouth$mouth.seg,
+  #                                  startvert = rivernetwork$mouth$mouth.vert,
+  #                                  endseg = i,
+  #                                  endvert = 1,
+  #                                  rivers = rivernetwork))
+  #   print(check_upstream)
+  #
+  #   if(check_upstream == "down"){
+  #     below_mouth[i] <- TRUE
+  #   }
+  #   checked[i] <- TRUE
+  # }
+  #
+  # below_mouth  <- which(below_mouth)
+  # rivernetwork <- trimriver(rivers = rivernetwork, trim = below_mouth)
+
   rivernetwork_geom <- st_cast(st_sfc(st_multilinestring(rivernetwork$lines)), "LINESTRING")
   st_sf(rivernetwork$lineID, geom = rivernetwork_geom, crs = crs)
   # st_as_sf(rivernetwork)

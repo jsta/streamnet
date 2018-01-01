@@ -48,30 +48,30 @@ b0 <- sf::st_sfc(sf::st_polygon(list(rbind(
 sf::st_crs(b0) <- 4326
 b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 
-outlet <- terminal_reaches(
+outlet_reach <- terminal_reaches(
                  lon = st_coordinates(st_centroid(b0))[1], 
                  lat = st_coordinates(st_centroid(b0))[2])
-outlet <- st_cast(st_line_sample(outlet, sample = 1), "POINT")
+outlet_point <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
 
 nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
 ```
 </details>
 
 <details>
- <summary>Calculate Stream Order</summary>
+ <summary>Calculate stream order</summary>
  
 ```{r grass_stream-order}
 Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
 
-res <- stream_order(lines = nhd, outlet = outlet)
+res <- stream_order(lines = nhd, outlet = outlet_point)
 
-coords <- st_coordinates(st_transform(outlet, 4326))
-poly <- nhd_plus_query(coords[1], coords[2], 
+coords <- st_coordinates(st_transform(outlet_point, 4326))
+poly   <- nhd_plus_query(coords[1], coords[2], 
                         dsn = "NHDWaterbody")$sp$NHDWaterbody
 
 ggplot() + 
   geom_sf(data = poly, color = "white") +
-  geom_sf(data = res, aes(color = strahler))
+  geom_sf(data = res, aes(color = as.factor(strahler)))
 ```
 </details>
 
@@ -79,6 +79,14 @@ ggplot() +
   <summary>Calculate average link length</summary>
 
 ```{r }  
-avg_link_length(lines = nhd)
+avg_link_length(lines = nhd, outlet_reach = outlet_reach)
+```
+</details>
+
+<details>
+  <summary>Calculate distance to closest upstream lake</summary>
+  
+```{r }
+1 + 1
 ```
 </details>
