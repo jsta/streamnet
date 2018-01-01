@@ -24,7 +24,9 @@
 #'}
 stream_order <- function(lines, outlet, ...){
 
-  lines_sp <- as(lines, "Spatial")
+  lines_sp <- SpatialLinesDataFrame(as_Spatial(st_sfc(lines$geometry)),
+                                    data = as.data.frame(lines),
+                                    match.ID = FALSE)
   lines_r <- as(raster::raster(raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
 
   rgrass7sf:: initGRASS(gisBase = "/usr/lib/grass72/",

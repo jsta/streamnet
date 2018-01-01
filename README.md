@@ -42,7 +42,8 @@ b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 
 outlet_reach <- terminal_reaches(
                  lon = st_coordinates(st_centroid(b0))[1], 
-                 lat = st_coordinates(st_centroid(b0))[2])
+                 lat = st_coordinates(st_centroid(b0))[2], 
+                 approve_all_dl = TRUE)
 #> Warning in st_centroid.sfc(b0): st_centroid does not give correct centroids
 #> for longitude/latitude data
 
