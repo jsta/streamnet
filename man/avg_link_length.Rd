@@ -8,6 +8,8 @@ avg_link_length(lines, outlet_reach)
 }
 \arguments{
 \item{lines}{sf linestring collection}
+
+\item{outlet_reach}{sf lines object representing the outlet reach}
 }
 \description{
 Calculate average link length of stream network

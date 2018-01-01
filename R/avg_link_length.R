@@ -1,6 +1,7 @@
 #' Calculate average link length of stream network
 #'
 #' @param lines sf linestring collection
+#' @param outlet_reach sf lines object representing the outlet reach
 #'
 #' @export
 #' @importFrom riverdist line2network
