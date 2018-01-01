@@ -64,7 +64,7 @@ nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
 ```{r grass_stream-order}
 Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
 
-res <- stream_order(lines = nhd, outlet = outlet_point)
+res <- stream_order(lines = nhd, outlet = outlet_point, geom_colname = "geometry")
 
 coords <- st_coordinates(st_transform(outlet_point, 4326))
 poly   <- nhd_plus_query(coords[1], coords[2], 
