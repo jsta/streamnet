@@ -37,19 +37,22 @@ rvnet2sf <- function(rvnet, crs){
 #' sf::st_crs(b0) <- 4326
 #' b0 <- st_transform(b0, sf::st_crs(nhdR::vpu_shp))
 #'
-#' outlet_reach <- terminal_reaches(
-#'   lon = st_coordinates(st_centroid(b0))[1],
-#'   lat = st_coordinates(st_centroid(b0))[2],
+#' nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
+#'
+#' outlet_reach <- terminal_reaches(network = nhd,
 #'   approve_all_dl = TRUE)
 #' outlet_point <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
 #'
-#' nhd <- nhd_plus_query(poly = b0, dsn = c("NHDFlowLine"))$sp$NHDFlowLine
 #' mouthseg  <- which(nhd$COMID == outlet_reach$comid)
 #  mouthvert <- 1
 #  nhd_rv <- riverdist::line2network(as(nhd, "Spatial"), tolerance = 1)
 #' res <- autoclean(nhd_rv, mouthseg, mouthvert, crs = st_crs(nhd))
 #' }
 autoclean <- function(rivernetwork, mouthseg, mouthvert, crs, dissolve = FALSE){
+  rivernetwork <- setmouth(seg = mouthseg,
+                           vert = mouthvert,
+                           rivers = rivernetwork)
+
   rivernetwork <- riverdist::removeduplicates(rivers = rivernetwork)
 
   if(dissolve){
@@ -57,10 +60,6 @@ autoclean <- function(rivernetwork, mouthseg, mouthvert, crs, dissolve = FALSE){
   }
 
   rivernetwork <- removemicrosegs(rivernetwork)
-
-  rivernetwork <- setmouth(seg = mouthseg,
-                           vert = mouthvert,
-                           rivers = rivernetwork)
 
   # sequence taken from riverdist::clean ####
   checked <- takeout <- below_mouth <- rep(F, length(rivernetwork$lines))
