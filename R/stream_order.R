@@ -29,7 +29,8 @@ stream_order <- function(lines, outlet, ...){
                                     data = as.data.frame(lines),
                                     match.ID = FALSE)
 
-  lines_r <- as(raster::raster(raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
+  lines_r <- as(raster::raster(
+    raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
 
   rgrass7sf:: initGRASS(gisBase = "/usr/lib/grass72/",
             home = tempdir(),
