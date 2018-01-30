@@ -11,6 +11,7 @@
 #' @export
 #'
 #' @examples \dontrun{
+#' library(sf)
 #' library(mapview)
 #'
 #' data(nhd_sub)

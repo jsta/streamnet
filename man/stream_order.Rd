@@ -18,6 +18,7 @@ Calculate stream order with GRASS
 }
 \examples{
 \dontrun{
+library(sf)
 library(mapview)
 
 data(nhd_sub)
