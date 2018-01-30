@@ -18,3 +18,11 @@ create_reversed_tree <- function(node_n){
 
   return(tree2)
 }
+
+check_grass <- function(){
+  file.exists(grass_path())
+}
+
+grass_path <- function(){
+  "/usr/lib/grass72/"
+}
