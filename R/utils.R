@@ -24,5 +24,7 @@ check_grass <- function(){
 }
 
 grass_path <- function(){
-  "/usr/lib/grass72/"
+  flist <- list.files("/usr/lib", pattern = "^grass\\d{2}")
+  flist <- flist[which.max(as.numeric(gsub("[^0-9]", "", flist)))]
+  file.path("/usr/lib", flist)
 }
