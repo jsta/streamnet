@@ -33,7 +33,7 @@ stream_order <- function(lines, outlet, ...){
   lines_r <- as(raster::raster(
     raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
 
-  rgrass7sf:: initGRASS(gisBase = grass_path(),
+  rgrass7sf::initGRASS(gisBase = grass_path(),
             home = tempdir(),
             override = TRUE,
             SG = lines_r)

@@ -14,6 +14,8 @@ autoclean(rivernetwork, mouthseg, mouthvert, crs, dissolve = FALSE)
 \item{mouthvert}{integer}
 
 \item{crs}{crs string or epsg code}
+
+\item{dissolve}{logical combine runs of segments with no other connections?}
 }
 \description{
 Automatically clean a rivernetwork object

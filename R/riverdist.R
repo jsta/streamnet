@@ -18,6 +18,7 @@ rvnet2sf <- function(rvnet, crs){
 #' @param mouthseg integer
 #' @param mouthvert integer
 #' @param crs crs string or epsg code
+#' @param dissolve logical combine runs of segments with no other connections?
 #'
 #' @importFrom riverdist removeduplicates dissolve removemicrosegs setmouth trimriver detectroute riverdirection
 #' @export
