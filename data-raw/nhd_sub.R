@@ -1,6 +1,21 @@
 library(nhdR)
+library(mapview)
 library(sf)
-library(riverdist)
+library(streamnet)
+
+
+coords <- c(lon = -73.17581, lat = 41.38634)
+poly   <- nhd_plus_query(coords[1], coords[2], dsn = "NHDWaterbody",
+                         buffer_dist = 0.01)$sp$NHDWaterbody
+
+lines  <- extract_network(coords[1], coords[2], buffer_dist = 0.02, maxsteps = Inf)
+
+# stream order ratio
+# link_length
+# distance to closest upstream lake
+# calc_metrics(lines)
+
+mapview(poly) + mapview(lines)
 
 bbox <- data.frame(xmin = -73.33838, ymin = 41.35841,
                    xmax = -73.14540, ymax = 41.48593)

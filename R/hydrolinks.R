@@ -65,16 +65,16 @@ traverse_r <- function(){
 #' @examples
 #' \dontrun{
 #' traverse_original(1000, "141329377", "out", "nhdh", md5check = FALSE)
-#' # this example traverses until a cycle is found and the end of the network is reached.
+#' traverse_original(1000, "166766701", "in", "nhdplusv2", md5check = FALSE)
 #' }
 traverse_original = function(max_distance, start, direction = c("out", "in"), dataset = c("nhdh", "nhdplusv2"), max_steps = 10000, db_path = NULL, ...){
   direction = match.arg(direction)
   dataset = match.arg(dataset)
-  check_dl_file(system.file('extdata/shape_id_cache.csv', package='hydrolinks'), fname = paste0(dataset, "_flowline_ids.zip"))
+  check_dl_file(system.file('extdata/shape_id_cache.csv', package='hydrolinks'), fname = paste0(dataset, "_flowline_ids.zip"), ...)
   if(is.null(db_path)){
     db_name = paste0("flowtable_", dataset)
     #db_name = "flowtable"
-    check_dl_file(system.file("extdata/flowtable.csv", package = "hydrolinks"), fname = paste0(db_name, ".zip"))
+    check_dl_file(system.file("extdata/flowtable.csv", package = "hydrolinks"), fname = paste0(db_name, ".zip"), ...)
 
     con = dbConnect(RSQLite::SQLite(), file.path(cache_get_dir(), 'unzip', paste0(db_name, ".zip"), paste0(db_name, ".sqlite3")))
   }
@@ -85,11 +85,18 @@ traverse_original = function(max_distance, start, direction = c("out", "in"), da
     dbDisconnect(con)
     stop("Cannot traverse from node 0!")
   }
-  nodes = data.frame(rep(NA, max_steps), rep(NA, max_steps), rep(NA, max_steps), stringsAsFactors = FALSE)
-  colnames(nodes) = c("PERMANENT_", "LENGTHKM", "CHILDREN")
-  iterations = 1
-  n = neighbors(start, direction, dataset, con)
-  if(nrow(n) == 0){
+
+  # setup ####
+  nodes <- data.frame(rep(NA, max_steps),
+                      rep(NA, max_steps),
+                      rep(NA, max_steps),
+                      stringsAsFactors = FALSE)
+  colnames(nodes) <- c("PERMANENT_", "LENGTHKM", "CHILDREN")
+  iterations      <- 1
+
+  n <- neighbors(start, direction, dataset, con)
+
+  if(nrow(n) == 0){ # start has not been passed as a wb id?
     flowline = get_shape_by_id(start, feature_type = "flowline", dataset = "nhdh", match_column = "PERMANENT_")
     if(!is.na(flowline) && !is.na(flowline$WBAREA_PER)){
       warning(paste0("Start ID provided is a virtual flowline inside a waterbody. Continuing from ", flowline$WBAREA_PER))
@@ -101,15 +108,28 @@ traverse_original = function(max_distance, start, direction = c("out", "in"), da
       return(nodes)
     }
   }
-  n$LENGTHKM[is.na(n$LENGTHKM)] = 0
-  to_check = n$LENGTHKM
-  names(to_check) = n$ID
+  #####
+  browser()
+
+  #####
+  # upstream_shp <- get_shape_by_id(n$ID, dataset = dataset,
+  #                                 feature_type = "flowline")
+  upstream_shp <- get_shape_by_id(6863677, dataset = dataset,
+                               feature_type = "flowline")
+  # print(n)
+  #####
+
+  n$LENGTHKM[is.na(n$LENGTHKM)] <- 0
+  to_check                      <- n$LENGTHKM
+  names(to_check)               <- n$ID
+
   if(max_distance == 0){
-    nodes = cbind(names(to_check), to_check, NA, NA)
-    rownames(nodes) = c(1:nrow(nodes))
+    nodes           <- cbind(names(to_check), to_check, NA, NA)
+    rownames(nodes) <- c(1:nrow(nodes))
     dbDisconnect(con)
     return(nodes)
   }
+
   while(1){
     next_check = c()
 
@@ -124,23 +144,26 @@ traverse_original = function(max_distance, start, direction = c("out", "in"), da
     }
 
     if(length(names(to_check)) > 1){
-      nodes[c(iterations:(iterations+length(names(to_check)) - 1)), ] = cbind(names(to_check), to_check, NA)
+      nodes[c(iterations:(iterations+length(names(to_check)) - 1)), ] <-
+        cbind(names(to_check), to_check, NA)
     }
     else{
       nodes[iterations, ] = cbind(names(to_check), to_check, NA)
     }
 
-    iterations = iterations + length(to_check)
-    for(j in 1:length(to_check)){
-      n = neighbors(names(to_check)[j], direction, dataset, con)
-      nodes[which(nodes[,1] == names(to_check)[j]), 3] = paste(n$ID, sep = ",", collapse = ",")
-      n$LENGTHKM[is.na(n$LENGTHKM)] = 0
-      next_check_tmp = n$LENGTHKM + to_check[j]
-      names(next_check_tmp) = n$ID
-      next_check = c(next_check, next_check_tmp)
-    }
-    next_check = next_check[unique(names(next_check))]
+    iterations <- iterations + length(to_check)
 
+    for(j in 1:length(to_check)){
+      browser()
+      n <- neighbors(names(to_check)[j], direction, dataset, con)
+      nodes[which(nodes[,1] == names(to_check)[j]), 3] <-
+        paste(n$ID, sep = ",", collapse = ",")
+      n$LENGTHKM[is.na(n$LENGTHKM)] <- 0
+      next_check_tmp <- n$LENGTHKM + to_check[j]
+      names(next_check_tmp) <- n$ID
+      next_check <- c(next_check, next_check_tmp)
+    }
+    next_check <- next_check[unique(names(next_check))]
 
     if(iterations > max_steps){
       next_nodes = data.frame(names(next_check), next_check, "STUCK")
@@ -158,13 +181,12 @@ traverse_original = function(max_distance, start, direction = c("out", "in"), da
       return(nodes)
     }
 
-    #We need a stop condition where all further neighbors go nowhere
+    # We need a stop condition where all further neighbors go nowhere
     if(all(names(next_check) == '0')){
       nodes = nodes[!is.na(nodes$PERMANENT_),]
       dbDisconnect(con)
       return(nodes)
     }
-
 
     for(j in names(next_check)){
       if(max_distance > 0 && next_check[j] > max_distance){
@@ -173,29 +195,33 @@ traverse_original = function(max_distance, start, direction = c("out", "in"), da
         return(nodes)
       }
     }
-    to_check = next_check
+    to_check <- next_check
   }
 }
 
-neighbors = function(node, direction = c("in", "out"), dataset = c("nhdh", "nhdplusv2"), con){
-  From_Permanent_Identifier = NULL
-  To_Permanent_Identifier = NULL
+neighbors <- function(node, direction = c("in", "out"), dataset = c("nhdh", "nhdplusv2"), con){
+  From_Permanent_Identifier <- NULL
+  To_Permanent_Identifier   <- NULL
 
-  direction = match.arg(direction)
-  dataset = match.arg(dataset)
-  dinfo = dataset_info(dataset, "flowline")
-  from_column = dinfo$flowtable_from_column
-  to_column = dinfo$flowtable_to_column
+  dinfo       <- dataset_info(dataset, "flowline")
+  from_column <- dinfo$flowtable_from_column
+  to_column   <- dinfo$flowtable_to_column
 
-  sql = ""
+  sql <- ""
 
   if(direction == "out"){
-    sql = paste0("SELECT * from flowtable where ", from_column, " IN ('", paste(node, collapse = "','"), "')")
+    sql <- paste0("SELECT * from flowtable where ",
+                  from_column,
+                  " IN ('",
+                  paste(node, collapse = "','"), "')")
   }
   else if(direction == "in"){
-    sql = paste0("SELECT * from flowtable where ", to_column, " IN ('", paste(node, collapse = "','"), "')")
+    sql <- paste0("SELECT * from flowtable where ",
+                  to_column,
+                  " IN ('",
+                  paste(node, collapse = "','"), "')")
   }
-  graph = dbGetQuery(con, sql)
+  graph <- dbGetQuery(con, sql)
   ret = NULL
   if(direction == "out"){
     ret = data.frame(graph[, to_column], graph$LENGTHKM)
