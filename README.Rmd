@@ -27,7 +27,11 @@ devtools::install_github("jsta/streamnet")
 
 ## Usage
 
-```{r message=FALSE, eval=TRUE, results='hide'}
+```{r echo=FALSE}
+Sys.setenv(GRASS_VERBOSE = 0)
+```
+
+```{r message=FALSE, eval=TRUE, warning=FALSE}
 library(sf)
 library(nhdR)
 library(streamnet)

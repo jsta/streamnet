@@ -48,11 +48,11 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
   # use GRASS v.net.distance to calculate network distances
   grass_setup(lines)
 
-  rgrass7sf::writeVECT(lines, "testlines"  ,
+  capture.output(rgrass7sf::writeVECT(lines, "testlines",
                        v.in.ogr_flags = c("o", "overwrite"),
-                       ignore.stderr = TRUE)
+                       ignore.stderr = TRUE), file = tempfile())
 
-  rgrass7sf::writeVECT(t_reach_pnts, "treachpnts"  ,
+  rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
                        v.in.ogr_flags = c("o", "overwrite"),
                        ignore.stderr = TRUE)
 
