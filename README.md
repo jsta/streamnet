@@ -31,14 +31,9 @@ outlet_reach   <- terminal_reaches(network = nhd_sub_lines,
                                    approve_all_dl = TRUE, quiet = TRUE)
 outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
 
-plot(nhd_sub_lines$geometry)
-plot(outlet_reach$geometry, add = TRUE, col = "red", lwd = 2)
-plot(outlet_point, add = TRUE)
-```
-
-![](inst/images/unnamed-chunk-3-1.png)
-
-``` r
+# plot(nhd_sub_lines$geometry)
+# plot(outlet_reach$geometry, add = TRUE, col = "red", lwd = 2)
+# plot(outlet_point, add = TRUE)
 
 # avg link_length
 nhd_sub_simple <- simplify_network(nhd_sub_lines)
