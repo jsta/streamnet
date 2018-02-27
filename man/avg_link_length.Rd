@@ -4,13 +4,17 @@
 \alias{avg_link_length}
 \title{Calculate average link length of stream network}
 \usage{
-avg_link_length(lines, outlet_reach)
+avg_link_length(lines)
 }
 \arguments{
 \item{lines}{sf linestring collection}
-
-\item{outlet_reach}{sf lines object representing the outlet reach}
 }
 \description{
 Calculate average link length of stream network
+}
+\examples{
+\dontrun{
+data(nhd_sub)
+avg_link_length(nhd_sub)
+}
 }

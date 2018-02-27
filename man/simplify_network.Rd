@@ -6,6 +6,9 @@
 \usage{
 simplify_network(lines)
 }
+\arguments{
+\item{lines}{sf data.frame composed of LINESTRING objects}
+}
 \description{
 Combine(dissolve) adjacent reaches with no junctions
 }

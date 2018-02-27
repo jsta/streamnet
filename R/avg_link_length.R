@@ -1,33 +1,26 @@
 #' Calculate average link length of stream network
 #'
 #' @param lines sf linestring collection
-#' @param outlet_reach sf lines object representing the outlet reach
 #'
 #' @export
-#' @importFrom riverdist line2network
 #' @importFrom sf st_crs st_cast st_sfc st_length
-avg_link_length <- function(lines, outlet_reach){
-
-  mouthseg  <- which(lines$COMID == outlet_reach$comid)
-  mouthvert <- 1
-
-  lines_rv <- riverdist::line2network(as(lines, "Spatial"), tolerance = 1)
-  lines_sf <- streamnet::rvnet2sf(lines_rv, crs = sf::st_crs(lines))
-
-  lines_clean <- suppressMessages(autoclean(lines_rv,
-                                            mouthseg,
-                                            mouthvert,
-                                            st_crs(lines)))
-  # mapview(lines_clean)
-  lines_explode <- st_cast(st_sfc(lines_clean$geom), "LINESTRING")
-  mean(st_length(lines_explode))
+#' @examples \dontrun{
+#' data(nhd_sub)
+#' avg_link_length(nhd_sub)
+#' }
+avg_link_length <- function(lines){
+  lines <- simplify_network(lines)
+  mean(st_length(lines))
 }
 
 #' Simplify network
 #'
 #' Combine(dissolve) adjacent reaches with no junctions
 #'
+#' @param lines sf data.frame composed of LINESTRING objects
+#'
 #' @export
+#' @importFrom sf st_union st_line_merge
 #' @examples \dontrun{
 #' data(nhd_sub)
 #' res <- simplify_network(nhd_sub)
