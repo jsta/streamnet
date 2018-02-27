@@ -32,6 +32,6 @@ traverse hydrological network
 \examples{
 \dontrun{
 traverse_original(1000, "141329377", "out", "nhdh", md5check = FALSE)
-# this example traverses until a cycle is found and the end of the network is reached.
+traverse_original(1000, "166766701", "in", "nhdplusv2", md5check = FALSE)
 }
 }
