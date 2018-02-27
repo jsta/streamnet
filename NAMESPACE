@@ -2,6 +2,7 @@
 
 export(autoclean)
 export(avg_link_length)
+export(calc_metrics)
 export(closest_lake_distance)
 export(create_reversed_tree)
 export(hlk_traverse)

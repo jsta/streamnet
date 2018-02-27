@@ -84,12 +84,12 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                        ),
                        flags = c("quiet", "overwrite"))
 
-  rgrass7sf::execGRASS("v.category",
-                       parameters = list(
-                         input = "linesnet2",
-                         option = "report"
-                       ),
-                       flags = c("quiet", "overwrite"))
+  # rgrass7sf::execGRASS("v.category",
+  #                      parameters = list(
+  #                        input = "linesnet2",
+  #                        option = "report"
+  #                      ),
+  #                      flags = c("quiet", "overwrite"))
 
   rgrass7sf::execGRASS("v.net.distance",
                        parameters = list(
@@ -100,13 +100,12 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                          ),
                        flags = c("quiet", "overwrite"))
 
-
-  res <- rgrass7sf::execGRASS("v.report",
+  capture.output(res <- rgrass7sf::execGRASS("v.report",
                        parameters = list(
                          map = "dist2out",
                          option = "length"
                        ),
-                       flags = c("quiet"))
+                       flags = c("quiet"), echoCmd = FALSE), file = tempfile())
 
   res <- read.csv(textConnection(attr(res, "resOut")), sep = "|")
 
