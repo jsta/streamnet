@@ -24,7 +24,7 @@ library(mapview)
 data(nhd_sub)
 
 outlet <- st_cast(st_line_sample(
-              dplyr::filter(nhd_sub, COMID == "7718342"),
+              dplyr::filter(nhd_sub, comid == "7718290"),
           sample = 1), "POINT")
 
 res <- stream_order(lines = nhd_sub, outlet = outlet)

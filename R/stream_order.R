@@ -17,7 +17,7 @@
 #' data(nhd_sub)
 #'
 #' outlet <- st_cast(st_line_sample(
-#'               dplyr::filter(nhd_sub, COMID == "7718342"),
+#'               dplyr::filter(nhd_sub, comid == "7718290"),
 #'           sample = 1), "POINT")
 #'
 #' res <- stream_order(lines = nhd_sub, outlet = outlet)
@@ -25,34 +25,7 @@
 #'}
 stream_order <- function(lines, outlet, ...){
 
-
-  lines_sp <- SpatialLinesDataFrame(as_Spatial(st_geometry(lines)),
-                                    data = as.data.frame(lines),
-                                    match.ID = FALSE)
-
-  lines_r <- as(raster::raster(
-    raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
-
-  rgrass7sf::initGRASS(gisBase = grass_path(),
-            home = tempdir(),
-            override = TRUE,
-            SG = lines_r)
-
-  rgrass7sf::execGRASS("g.mapset", flags = c("quiet"),
-            parameters = list(
-              mapset = "PERMANENT"))
-
-  Sys.setenv(GRASS_PROJSHARE = paste(Sys.getenv("GISBASE"),
-                                     "\\proj", sep=""))
-
-  proj4 <- sf::st_crs(lines)$proj4string
-
-  rgrass7sf::execGRASS("g.proj", flags = c("c", "quiet"),
-            parameters = list(
-              proj4 = proj4
-            ))
-
-  rgrass7sf::gmeta(ignore.stderr = TRUE)
+  grass_setup(lines)
 
   lines <- lines[,!duplicated(tolower(names(lines)))]
   # lines <- lines[!(is.na(lines$ToNode) & is.na(lines$FromNode)),]

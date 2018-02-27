@@ -28,3 +28,35 @@ grass_path <- function(){
   flist <- flist[which.max(as.numeric(gsub("[^0-9]", "", flist)))]
   file.path("/usr/lib", flist)
 }
+
+grass_setup <- function(lines){
+
+  lines_sp <- SpatialLinesDataFrame(as_Spatial(st_geometry(lines)),
+                                    data = as.data.frame(lines),
+                                    match.ID = FALSE)
+
+  lines_r <- as(raster::raster(
+    raster::extent(sp::SpatialLines(lines_sp@lines))), "SpatialGrid")
+
+  rgrass7sf::initGRASS(gisBase = grass_path(),
+                       home = tempdir(),
+                       override = TRUE,
+                       SG = lines_r)
+
+  rgrass7sf::execGRASS("g.mapset", flags = c("quiet"),
+                       parameters = list(
+                         mapset = "PERMANENT"))
+
+  Sys.setenv(GRASS_PROJSHARE = paste(Sys.getenv("GISBASE"),
+                                     "\\proj", sep=""))
+
+  proj4 <- sf::st_crs(lines)$proj4string
+
+  rgrass7sf::execGRASS("g.proj", flags = c("c", "quiet"),
+                       parameters = list(
+                         proj4 = proj4
+                       ))
+
+  rgrass7sf::gmeta(ignore.stderr = TRUE)
+
+}
