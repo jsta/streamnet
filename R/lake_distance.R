@@ -1,10 +1,15 @@
 #' Find the distance to the closest upstream lake
 #'
-#' @param lines
-#' @param lakes
+#' @param lines sf lines object
+#' @param lakes sf polygon object
 #' @param outlet integer row index of outlet reach relative to lines
-#' @param size_threshold
+#' @param size_threshold numeric size above which to consider as a lake
+#' @param map logical show a map output of the results?
 #'
+#' @importFrom utils read.csv
+#' @importFrom graphics plot
+#' @importFrom sf st_area st_intersects
+#' @importFrom nhdR terminal_reaches
 #' @export
 #' @examples \dontrun{
 #' data(nhd_sub_lines)
@@ -17,7 +22,8 @@
 #'
 #' closest_lake_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
 #' }
-closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4){
+closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
+                                  map = FALSE){
 
   # filter lakes by size threshold
   lakes <- lakes[st_area(lakes) >
@@ -102,79 +108,14 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4){
                        ),
                        flags = c("quiet"))
 
-  v.report map=distance_samples_to_pollution@vnettest option=length
-  cat|tcat|dist|length
-
-  rgrass7sf::readVECT("dist2out", ignore.stderr = TRUE)
-
-  # find at least 3 catchment lakes within a euclidean buffer (remove focal lake)
-  focal_lake <- lakes[order(st_distance(lakes, outlet_point),
-                            decreasing = FALSE),][1,]
-  lakes      <- lakes[order(st_distance(lakes, focal_lake),
-                            decreasing = FALSE),][2:7,]
-  # mapview(test) +
-  #   mapview(st_buffer(outlet_point, 2)) + mapview(nhd_sub_lines)
-
-  # climb down the network from each catchment lake to the focal lake
-  # breakup lines to the path between each catchment lake and the focal lake
-  mapview(st_convex_hull(st_union(lakes))) + mapview(nhd_sub_lines)
-  network_table
-
-
-  # calculate dist along each line
-
-  # return shortest
-
-  # Is it a LakeStream?
-  lg <- lagosne_load("1.087.1")
-  lake_stream <- lg$lakes.geo[
-    lg$lakes.geo$lagoslakeid == lagoslakeid,]$lakeconnection
-  if(lake_stream != "DR_LakeStream"){
-    return(NA)
-  }
-
-  lines_clean_sp <- SpatialLinesDataFrame(as_Spatial(st_geometry(lines_clean)),
-                                          data = as.data.frame(lines_clean),
-                                          match.ID = FALSE)
-  lines_clean_rv <- riverdist::line2network(lines_clean_sp, tolerance = 1)
-
-  # Closest distance to a leaf reach - given that we are limiting the
-  # analysis to LakeStreams, this is the location of an upstream lake
-  browser()
-  if(scale == "iws"){
-    l_reaches <- nhdR::leaf_reaches(network = lines_clean,
-                                    approve_all_dl = TRUE)
-    # browser()
-  }else{
-    # browser()
-    t_reaches <- nhdR::terminal_reaches(network = lines_clean,
-                                        approve_all_dl = TRUE, lakewise = TRUE)
-    t_iws     <- nhdR::terminal_reaches(network = lines_clean,
-                                        approve_all_dl = TRUE, lakewise = FALSE)
-    l_reaches <- t_reaches[!(t_reaches$comid %in% t_iws$comid),]
-  }
-
-  names(l_reaches) <- tolower(names(l_reaches))
-  l_reach_segs     <- which(lines_clean$comid %in% l_reaches$comid)
-
-  mouthseg  <- which(lines_clean$comid == outlet_reach$comid)
-  distances <- unlist(lapply(l_reach_segs, function(x) riverdistance(mouthseg,
-                                                                     x, 1, 1,
-                                                                     lines_clean_rv)))
-
-  # mapview(lines_clean) + mapview(l_reaches, color = "red")
+  res <- read.csv(textConnection(attr(res, "resOut")), sep = "|")
 
   if(map){
-    par(mfrow = c(1, 2))
-    plot(lines_clean$geom)
-    plot(lines_clean$geom[l_reach_segs], add = TRUE, col = "red")
-    riverdistance(mouthseg, l_reach_segs[which.min(distances)],
-                  1, 1, lines_clean_rv, map = TRUE)
-    par(mfrow = c(1, 1))
+    plot(st_sf(data.frame(dist = res$dist),
+                  st_sfc(st_geometry(t_reach_pnts))))
   }
 
-
   list(
-    closest_lake_distance = distances[which.min(distances)],
-    num_up_lakes = length(l_reach_segs))
+    closest_lake_distance = min(res$dist),
+    num_up_lakes          = length(t_reach_pnts))
 }
