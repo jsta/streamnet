@@ -37,13 +37,22 @@ library(nhdR)
 library(streamnet)
 
 data(nhd_sub)
-outlet_reach <- terminal_reaches(network = nhd_sub, 
-                 approve_all_dl = TRUE)
-outlet_point <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
+
+outlet_reach   <- terminal_reaches(network = nhd_sub, approve_all_dl = TRUE)
+outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
+nhd_sub_simple <- simplify_network(nhd_sub)
 
 plot(nhd_sub$geometry)
-plot(outlet_reach$geometry, add = TRUE, col = "red")
+plot(outlet_reach$geometry, add = TRUE, col = "red", lwd = 2)
 plot(outlet_point, add = TRUE)
+
+
+# link_length
+# stream order ratio
+# distance to closest upstream lake
+# number of upsream lakes
+
+# calc_metrics(lines)
 ```
 </details>
 
