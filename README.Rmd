@@ -27,14 +27,11 @@ devtools::install_github("jsta/streamnet")
 
 ## Usage
 
-<details>
- <summary>Generate test stream network</summary>
-
-```{r test_dataset}
+```{r message=FALSE, eval=TRUE, results='hide'}
 library(sf)
-library(ggplot2)
 library(nhdR)
 library(streamnet)
+library(ggplot2)
 
 data(nhd_sub_lines)
 data(nhd_sub_lakes)
@@ -54,8 +51,6 @@ avg_link_length(nhd_sub_lines)
 
 # stream order ratio
 res <- stream_order(nhd_sub_lines, outlet = outlet_point)
-mapview::mapview(res, zcol = "strahler")
-
 stream_order_ratio(nhd_sub_lines, outlet = outlet_point)
 
 # distance to closest upstream lake
@@ -64,40 +59,5 @@ outlet <- which(outlet_reach$comid == nhd_sub_lines$comid)
 closest_lake_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
 
 # all together now
-calc_metrics(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
+calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 ```
-</details>
-
-<details>
- <summary>Calculate stream order</summary>
- 
-```{r grass_stream-order}
-Sys.setenv(GRASS_VERBOSE = -1) # suppress grass messages
-
-res <- stream_order(lines = nhd, outlet = outlet_point, geom_colname = "geometry")
-
-coords <- st_coordinates(st_transform(outlet_point, 4326))
-poly   <- nhd_plus_query(coords[1], coords[2], 
-                        dsn = "NHDWaterbody")$sp$NHDWaterbody
-
-ggplot() + 
-  geom_sf(data = poly, color = "white") +
-  geom_sf(data = res, aes(color = as.factor(strahler)))
-```
-</details>
-
-<details>
-  <summary>Calculate average link length</summary>
-
-```{r }  
-avg_link_length(lines = nhd, outlet_reach = outlet_reach)
-```
-</details>
-
-<details>
-  <summary>Calculate distance to closest upstream lake</summary>
-  
-```{r }
-1 + 1
-```
-</details>

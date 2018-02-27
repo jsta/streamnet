@@ -6,7 +6,7 @@
 #' @param size_threshold numeric size above which to consider as a lake
 #' @param map logical show a map output of the results?
 #'
-#' @importFrom utils read.csv
+#' @importFrom utils read.csv capture.output
 #' @importFrom graphics plot
 #' @importFrom sf st_area st_intersects
 #' @importFrom nhdR terminal_reaches
