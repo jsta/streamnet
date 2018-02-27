@@ -34,7 +34,7 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
     which(unlist(lapply(st_intersects(lakes, lines), length)) > 0),]
 
   # find terminal reach of each lake and terminal reach of focal lake
-  t_reaches    <- terminal_reaches(network = lines, lakewise = TRUE)
+  t_reaches    <- terminal_reaches(network = lines, lakewise = TRUE, quiet = TRUE)
 
   t_reach_pnts <- st_line_sample(t_reaches, sample = c(1))
   t_reach_pnts <- st_cast(t_reach_pnts, "POINT")

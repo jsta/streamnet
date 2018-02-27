@@ -31,7 +31,7 @@ NULL
 #' }
 calc_metrics <- function(lines, lakes, map = FALSE){
   outlet_reach   <- terminal_reaches(network = lines,
-                                     approve_all_dl = TRUE)
+                                     approve_all_dl = TRUE, quiet = TRUE)
   outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
   outlet         <- which(outlet_reach$comid == lines$comid)
   nhd_sub_simple <- simplify_network(lines)

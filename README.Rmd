@@ -41,7 +41,7 @@ data(nhd_sub_lines)
 data(nhd_sub_lakes)
 
 outlet_reach   <- terminal_reaches(network = nhd_sub_lines, 
-                                   approve_all_dl = TRUE)
+                                   approve_all_dl = TRUE, quiet = TRUE)
 outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
 
 plot(nhd_sub_lines$geometry)
