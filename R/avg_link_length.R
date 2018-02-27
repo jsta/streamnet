@@ -22,3 +22,18 @@ avg_link_length <- function(lines, outlet_reach){
   lines_explode <- st_cast(st_sfc(lines_clean$geom), "LINESTRING")
   mean(st_length(lines_explode))
 }
+
+#' Simplify network
+#'
+#' Combine(dissolve) adjacent reaches with no junctions
+#'
+#' @export
+#' @examples \dontrun{
+#' data(nhd_sub)
+#' res <- simplify_network(nhd_sub)
+#'
+#' }
+simplify_network <- function(lines){
+  st_cast(st_line_merge(
+    st_union(st_cast(lines, "MULTILINESTRING"))), "LINESTRING")
+}
