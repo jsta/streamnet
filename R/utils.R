@@ -29,7 +29,7 @@ grass_path <- function(){
   file.path("/usr/lib", flist)
 }
 
-grass_setup <- function(lines){
+grass_setup <- function(lines, ...){
 
   lines_sp <- SpatialLinesDataFrame(as_Spatial(st_geometry(lines)),
                                     data = as.data.frame(lines),

@@ -25,7 +25,7 @@
 #'}
 stream_order <- function(lines, outlet, ...){
 
-  grass_setup(lines)
+  grass_setup(lines, ...)
 
   lines <- lines[,!duplicated(tolower(names(lines)))]
   # lines <- lines[!(is.na(lines$ToNode) & is.na(lines$FromNode)),]
@@ -46,6 +46,26 @@ stream_order <- function(lines, outlet, ...){
             flags = c("quiet"))
 
   rgrass7sf::readVECT("test", ignore.stderr = TRUE)
+}
+
+#' Calculate stream order ratio with GRASS
+#'
+#' @inheritParams stream_order
+#' @export
+#'
+#' @examples \dontrun{
+#' library(sf)
+#'
+#' data(nhd_sub)
+#'
+#' outlet_reach   <- terminal_reaches(network = nhd_sub, approve_all_dl = TRUE)
+#' outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
+#'
+#' stream_order_ratio(lines = nhd_sub, outlet = outlet_point)
+#'}
+stream_order_ratio <- function(lines, outlet, ...){
+  res <- stream_order(lines, outlet = outlet, ...)
+  length(which(res$strahler == 1)) / length(res$strahler)
 }
 
 #' Calculate stream order with igraph

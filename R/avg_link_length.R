@@ -1,6 +1,7 @@
 #' Calculate average link length of stream network
 #'
 #' @param lines sf linestring collection
+#' @param simplify logical run simplify_network prior to calculations?
 #'
 #' @export
 #' @importFrom sf st_crs st_cast st_sfc st_length
@@ -8,8 +9,10 @@
 #' data(nhd_sub)
 #' avg_link_length(nhd_sub)
 #' }
-avg_link_length <- function(lines){
-  lines <- simplify_network(lines)
+avg_link_length <- function(lines, simplify = FALSE){
+  if(simplify){
+    lines <- simplify_network(lines)
+  }
   mean(st_length(lines))
 }
 
