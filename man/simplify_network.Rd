@@ -14,8 +14,11 @@ Combine(dissolve) adjacent reaches with no junctions
 }
 \examples{
 \dontrun{
-data(nhd_sub)
-res <- simplify_network(nhd_sub)
+data(nhd_sub_lines)
+res <- simplify_network(nhd_sub_lines)
+
+# single line returns the original
+res <- simplify_network(nhd_sub_lines[1,])
 
 }
 }
