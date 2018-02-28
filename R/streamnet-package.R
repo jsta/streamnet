@@ -28,6 +28,9 @@ NULL
 #'
 #' res <- calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 #'
+#' # don't error if lines is only one row
+#' calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
+#'
 #' }
 calc_metrics <- function(lines, lakes, map = FALSE){
   outlet_reach   <- terminal_reaches(network = lines,
@@ -47,9 +50,13 @@ calc_metrics <- function(lines, lakes, map = FALSE){
 
   # distance to closest upstream lake
   # number of upsream lakes
-  cld <- closest_lake_distance(lines, lakes, outlet = outlet)
-  res$closest_lake_distance <- cld$closest_lake_distance
-  res$num_up_lakes          <- cld$num_up_lakes
+  if(nrow(lines) > 1){
+    cld <- closest_lake_distance(lines, lakes, outlet = outlet)
+    res$closest_lake_distance <- cld$closest_lake_distance
+    res$num_up_lakes          <- cld$num_up_lakes
+  }else{
+    res$closest_lake_distance <- res$num_up_lakes <- NA
+  }
 
   res
 }

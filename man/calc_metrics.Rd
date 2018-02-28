@@ -24,5 +24,8 @@ data(nhd_sub_lakes)
 
 res <- calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 
+# don't error if lines is only one row
+calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
+
 }
 }
