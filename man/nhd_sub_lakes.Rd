@@ -7,3 +7,6 @@
 \description{
 nhd_sub_lakes
 }
+\details{
+If nhdR::terminal reaches returns a zero length object, this function will return all NA
+}

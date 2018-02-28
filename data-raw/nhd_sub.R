@@ -11,7 +11,6 @@ nhd_sub_lines      <- extract_network(coords[1], coords[2],
 
 nhd_line_to_points <- st_sf(st_cast(st_union(nhd_sub_lines), "POINT"))
 nhd_sub_catchment  <- concaveman::concaveman(nhd_line_to_points)$polygons
-
 nhd_sub_lakes      <- nhd_plus_query(poly = nhd_sub_catchment,
                                      dsn = "NHDWaterbody")$sp$NHDWaterbody
 

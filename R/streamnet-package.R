@@ -12,6 +12,8 @@ NULL
 
 #' nhd_sub_lakes
 #'
+#' @details If nhdR::terminal reaches returns a zero length object, this function will return all NA
+#'
 #' @name nhd_sub_lakes
 #' @docType data
 NULL
@@ -33,29 +35,35 @@ NULL
 #'
 #' }
 calc_metrics <- function(lines, lakes, map = FALSE){
-  outlet_reach   <- terminal_reaches(network = lines,
-                                     approve_all_dl = TRUE, quiet = TRUE)
-  outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
-  outlet         <- which(outlet_reach$comid == lines$comid)
-  nhd_sub_simple <- simplify_network(lines)
-
   res <- list()
 
-  # avg link_length
-  res$avg_link_length       <- avg_link_length(nhd_sub_simple)
+  outlet_reach   <- terminal_reaches(network = lines,
+                                     approve_all_dl = TRUE, quiet = TRUE)
 
-  # stream order ratio
-  res$stream_order_ratio    <- stream_order_ratio(lines,
-                                                  outlet = outlet_point)
+  if(nrow(outlet_reach) > 0){
+    outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
+    outlet         <- which(outlet_reach$comid == lines$comid)
+    nhd_sub_simple <- simplify_network(lines)
 
-  # distance to closest upstream lake
-  # number of upsream lakes
-  if(nrow(lines) > 1){
-    cld <- closest_lake_distance(lines, lakes, outlet = outlet)
-    res$closest_lake_distance <- cld$closest_lake_distance
-    res$num_up_lakes          <- cld$num_up_lakes
+    # avg link_length
+    res$avg_link_length       <- avg_link_length(nhd_sub_simple)
+
+    # stream order ratio
+    res$stream_order_ratio    <- stream_order_ratio(lines,
+                                                    outlet = outlet_point)
+
+    # distance to closest upstream lake
+    # number of upsream lakes
+    if(nrow(lines) > 1){
+      cld <- closest_lake_distance(lines, lakes, outlet = outlet)
+      res$closest_lake_distance <- cld$closest_lake_distance
+      res$num_up_lakes          <- cld$num_up_lakes
+    }else{
+      res$closest_lake_distance <- res$num_up_lakes <- NA
+    }
   }else{
-    res$closest_lake_distance <- res$num_up_lakes <- NA
+    res$closest_lake_distance <- res$num_up_lakes <- res$stream_order_ratio <-
+      res$avg_link_length <- NA
   }
 
   res
