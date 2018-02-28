@@ -8,7 +8,7 @@
 #'
 #' @importFrom utils read.csv capture.output
 #' @importFrom graphics plot
-#' @importFrom sf st_area st_intersects
+#' @importFrom sf st_area st_intersects st_transform
 #' @importFrom nhdR terminal_reaches
 #' @export
 #' @examples \dontrun{
@@ -24,7 +24,6 @@
 #' }
 closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                                   map = FALSE){
-
   # filter lakes by size threshold
   lakes <- lakes[st_area(lakes) >
                    units::as_units(size_threshold, "ha"),]
@@ -39,11 +38,26 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
 
   t_reach_pnts <- st_line_sample(t_reaches, sample = c(1))
   t_reach_pnts <- st_cast(t_reach_pnts, "POINT")
+
   outlet_reach_ind <- which(t_reaches$comid ==
                               data.frame(lines)[outlet, "comid"])
-  outlet_reach <- t_reach_pnts[outlet_reach_ind]
-  t_reach_pnts <- t_reach_pnts[!(seq_len(length(t_reach_pnts)) %in%
-                                   outlet_reach_ind)]
+
+  if(length(outlet_reach_ind) > 0){
+    outlet_reach <- t_reach_pnts[outlet_reach_ind]
+    t_reach_pnts <- t_reach_pnts[!(seq_len(length(t_reach_pnts)) %in%
+                                     outlet_reach_ind)]
+  }else{ #probably a one-off error
+    outlet_reach   <- terminal_reaches(network = lines,
+                                       approve_all_dl = TRUE, quiet = TRUE)
+    outlet_reach <- t_reach_pnts[which.min(
+        st_distance(t_reach_pnts, outlet_reach))]
+
+    t_reach_pnts <- t_reach_pnts[
+      !(seq_len(length(t_reach_pnts)) %in%
+      which.min(st_distance(outlet_reach, t_reach_pnts)))]
+  }
+
+  # library(mapview)
   # mapview(t_reach_pnts) + mapview(outlet_reach, color = "red")
 
   # use GRASS v.net.distance to calculate network distances

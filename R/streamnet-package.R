@@ -33,15 +33,6 @@ NULL
 #' # don't error if lines is only one row
 #' calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
 #'
-#' library(sf)
-#' library(nhdR)
-#' readRDS(lines.rds")
-# nhd_line_to_points <- st_sf(st_cast(st_union(nhd_sub_lines), "POINT"))
-# nhd_sub_catchment  <- concaveman::concaveman(nhd_line_to_points)$polygons
-# nhd_sub_lakes      <- nhd_plus_query(poly = nhd_sub_catchment,
-#                                      dsn = "NHDWaterbody")$sp$NHDWaterbody
-# calc_metrics(nhd_sub_lines, nhd_sub_lakes)
-#'
 #' }
 calc_metrics <- function(lines, lakes, map = FALSE){
   res <- list()
