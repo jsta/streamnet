@@ -46,6 +46,7 @@ stream_order <- function(lines, outlet, ...){
             flags = c("quiet"), echoCmd = FALSE)
 
   rgrass7sf::readVECT("test", ignore.stderr = TRUE)
+
 }
 
 #' Calculate stream order ratio with GRASS

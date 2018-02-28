@@ -28,6 +28,7 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
   # filter lakes by size threshold
   lakes <- lakes[st_area(lakes) >
                    units::as_units(size_threshold, "ha"),]
+  lakes <- st_transform(lakes, st_crs(lines))
 
   # extract lakes that intersect lines
   lakes <- lakes[
