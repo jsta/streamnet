@@ -43,94 +43,100 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
   outlet_reach_ind <- which(t_reaches[["comid"]] ==
                               lines[["comid"]][outlet])
 
-  if(length(outlet_reach_ind) > 0){
-    outlet_reach <- t_reach_pnts[outlet_reach_ind]
-    t_reach_pnts <- t_reach_pnts[!(seq_len(length(t_reach_pnts)) %in%
-                                     outlet_reach_ind)]
-  }else{ #probably a one-off error
-    outlet_reach   <- terminal_reaches(network = lines,
-                                       approve_all_dl = TRUE, quiet = TRUE)
-    outlet_reach <- t_reach_pnts[which.min(
-        st_distance(t_reach_pnts, outlet_reach))]
+  if(length(t_reach_pnts) > 1){
+    if(length(outlet_reach_ind) > 0){
+      outlet_reach <- t_reach_pnts[outlet_reach_ind]
+      t_reach_pnts <- t_reach_pnts[!(seq_len(length(t_reach_pnts)) %in%
+                                       outlet_reach_ind)]
+    }else{ #probably a one-off error
+      outlet_reach   <- terminal_reaches(network = lines,
+                                         approve_all_dl = TRUE, quiet = TRUE)
+      outlet_reach <- t_reach_pnts[which.min(
+          st_distance(t_reach_pnts, outlet_reach))]
 
-    t_reach_pnts <- t_reach_pnts[
-      !(seq_len(length(t_reach_pnts)) %in%
-      which.min(st_distance(outlet_reach, t_reach_pnts)))]
-  }
+      t_reach_pnts <- t_reach_pnts[
+        !(seq_len(length(t_reach_pnts)) %in%
+        which.min(st_distance(outlet_reach, t_reach_pnts)))]
+    }
 
-  # library(mapview)
-  # mapview(t_reach_pnts) + mapview(outlet_reach, color = "red")
+    # library(mapview)
+    # mapview(t_reach_pnts) + mapview(outlet_reach, color = "red")
 
-  # use GRASS v.net.distance to calculate network distances
-  grass_setup(lines)
+    # use GRASS v.net.distance to calculate network distances
+    grass_setup(lines)
 
-  capture.output(rgrass7sf::writeVECT(lines, "testlines",
-                       v.in.ogr_flags = c("o", "overwrite"),
-                       ignore.stderr = TRUE), file = tempfile())
+    capture.output(rgrass7sf::writeVECT(lines, "testlines",
+                         v.in.ogr_flags = c("o", "overwrite"),
+                         ignore.stderr = TRUE), file = tempfile())
 
-  rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
-                       v.in.ogr_flags = c("o", "overwrite"),
-                       ignore.stderr = TRUE)
+    rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
+                         v.in.ogr_flags = c("o", "overwrite"),
+                         ignore.stderr = TRUE)
 
-  rgrass7sf::writeVECT(outlet_reach, "outpnt"  ,
-                       v.in.ogr_flags = c("o", "overwrite"),
-                       ignore.stderr = TRUE)
+    rgrass7sf::writeVECT(outlet_reach, "outpnt"  ,
+                         v.in.ogr_flags = c("o", "overwrite"),
+                         ignore.stderr = TRUE)
 
-  rgrass7sf::execGRASS("v.net",
-                       parameters = list(
-                         input = "testlines",
-                         points = "treachpnts",
-                         output = "linesnet",
-                         operation = "connect",
-                         threshold = 400,
-                         arc_layer = "1",
-                         node_layer = "2"
-                       ),
-                       flags = c("quiet", "overwrite"))
-
-  rgrass7sf::execGRASS("v.net",
-                       parameters = list(
-                         input = "linesnet",
-                         points = "outpnt",
-                         output = "linesnet2",
-                         operation = "connect",
-                         threshold = 400,
-                         arc_layer = "1",
-                         node_layer = "3"
-                       ),
-                       flags = c("quiet", "overwrite"))
-
-  # rgrass7sf::execGRASS("v.category",
-  #                      parameters = list(
-  #                        input = "linesnet2",
-  #                        option = "report"
-  #                      ),
-  #                      flags = c("quiet", "overwrite"))
-
-  rgrass7sf::execGRASS("v.net.distance",
-                       parameters = list(
-                         input = "linesnet2",
-                         output = "dist2out",
-                         from_layer = "2",
-                         to_layer = "3"
+    rgrass7sf::execGRASS("v.net",
+                         parameters = list(
+                           input = "testlines",
+                           points = "treachpnts",
+                           output = "linesnet",
+                           operation = "connect",
+                           threshold = 400,
+                           arc_layer = "1",
+                           node_layer = "2"
                          ),
-                       flags = c("quiet", "overwrite"))
+                         flags = c("quiet", "overwrite"))
 
-  capture.output(res <- rgrass7sf::execGRASS("v.report",
-                       parameters = list(
-                         map = "dist2out",
-                         option = "length"
-                       ),
-                       flags = c("quiet"), echoCmd = FALSE), file = tempfile())
+    rgrass7sf::execGRASS("v.net",
+                         parameters = list(
+                           input = "linesnet",
+                           points = "outpnt",
+                           output = "linesnet2",
+                           operation = "connect",
+                           threshold = 400,
+                           arc_layer = "1",
+                           node_layer = "3"
+                         ),
+                         flags = c("quiet", "overwrite"))
 
-  res <- read.csv(textConnection(attr(res, "resOut")), sep = "|")
+    # rgrass7sf::execGRASS("v.category",
+    #                      parameters = list(
+    #                        input = "linesnet2",
+    #                        option = "report"
+    #                      ),
+    #                      flags = c("quiet", "overwrite"))
 
-  if(map){
-    plot(st_sf(data.frame(dist = res$dist),
-                  st_sfc(st_geometry(t_reach_pnts))))
+    rgrass7sf::execGRASS("v.net.distance",
+                         parameters = list(
+                           input = "linesnet2",
+                           output = "dist2out",
+                           from_layer = "2",
+                           to_layer = "3"
+                           ),
+                         flags = c("quiet", "overwrite"))
+
+    capture.output(res <- rgrass7sf::execGRASS("v.report",
+                         parameters = list(
+                           map = "dist2out",
+                           option = "length"
+                         ),
+                         flags = c("quiet"), echoCmd = FALSE), file = tempfile())
+
+    res <- read.csv(textConnection(attr(res, "resOut")), sep = "|")
+
+    if(map){
+      plot(st_sf(data.frame(dist = res$dist),
+                    st_sfc(st_geometry(t_reach_pnts))))
+    }
+
+    list(
+      closest_lake_distance = min(res$dist),
+      num_up_lakes          = length(t_reach_pnts))
+  }else{
+    list(
+      closest_lake_distance = NA,
+      num_up_lakes          = NA)
   }
-
-  list(
-    closest_lake_distance = min(res$dist),
-    num_up_lakes          = length(t_reach_pnts))
 }

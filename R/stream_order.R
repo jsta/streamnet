@@ -45,8 +45,7 @@ stream_order <- function(lines, outlet, ...){
               input = "testlines",
               points = "testoutlet",
               output = "test"
-            ),
-            flags = c("quiet"), echoCmd = FALSE)
+            )) #, echoCmd = FALSE)
 
   rgrass7sf::readVECT("test", ignore.stderr = TRUE)
 }

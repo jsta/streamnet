@@ -27,7 +27,7 @@ outlet <- st_sf(data.frame(1), geometry = st_cast(st_line_sample(
                dplyr::filter(nhd_sub_lines, comid == "7718290"),
            sample = 1), "POINT"))
 
-stream_order(lines = nhd_sub_lines, outlet = outlet)
+res <- stream_order(lines = nhd_sub_lines, outlet = outlet)
 # mapview(res, zcol = "strahler")
 }
 }

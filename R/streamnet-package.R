@@ -21,17 +21,23 @@ NULL
 #' Calculate connectivity metrics
 #'
 #' @inheritParams closest_lake_distance
+#' @param focal_coords numeric vector of length 2
 #' @export
 #'
 #' @examples \dontrun{
 #'
 #' data(nhd_sub_lines)
 #' data(nhd_sub_lakes)
+#' coords <- c(lon = -73.17581, lat = 41.38634)
 #'
 #' res <- calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 #'
 #' # don't error if lines is only one row
 #' calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
+#'
+# lines <- readRDS("/home/jose/Documents/Science/Dissertation/Analysis/lines.rds")
+# lakes <- readRDS("/home/jose/Documents/Science/Dissertation/Analysis/lakes.rds")
+# calc_metrics(lines, lakes)
 #'
 #' }
 calc_metrics <- function(lines, lakes, map = FALSE){
@@ -41,7 +47,9 @@ calc_metrics <- function(lines, lakes, map = FALSE){
                                      approve_all_dl = TRUE, quiet = TRUE)
 
   if(nrow(outlet_reach) > 0){
+    outlet_reach <- outlet_reach[1,]
     outlet_point   <- st_cast(st_line_sample(outlet_reach, sample = 1), "POINT")
+
     outlet         <- which(outlet_reach$comid == lines$comid)
     nhd_sub_simple <- simplify_network(lines)
 
