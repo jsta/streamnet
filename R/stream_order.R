@@ -14,14 +14,14 @@
 #' library(sf)
 #' library(mapview)
 #'
-#' data(nhd_sub)
+#' data(nhd_sub_lines)
 #'
-#' outlet <- st_cast(st_line_sample(
-#'               dplyr::filter(nhd_sub, comid == "7718290"),
-#'           sample = 1), "POINT")
+#' outlet <- st_sf(data.frame(1), geometry = st_cast(st_line_sample(
+#'                dplyr::filter(nhd_sub_lines, comid == "7718290"),
+#'            sample = 1), "POINT"))
 #'
-#' res <- stream_order(lines = nhd_sub, outlet = outlet)
-#' mapview(res, zcol = "strahler")
+#' res <- stream_order(lines = nhd_sub_lines, outlet = outlet)
+#' # mapview(res, zcol = "strahler")
 #'}
 stream_order <- function(lines, outlet, ...){
 
@@ -37,6 +37,9 @@ stream_order <- function(lines, outlet, ...){
                        v.in.ogr_flags = c("o", "overwrite"),
                        ignore.stderr = TRUE)
 
+  print(outlet)
+  print(lines)
+
   rgrass7sf::execGRASS("v.stream.order",
             parameters = list(
               input = "testlines",
@@ -46,7 +49,6 @@ stream_order <- function(lines, outlet, ...){
             flags = c("quiet"), echoCmd = FALSE)
 
   rgrass7sf::readVECT("test", ignore.stderr = TRUE)
-
 }
 
 #' Calculate stream order ratio with GRASS

@@ -22,13 +22,14 @@ Find the distance to the closest upstream lake
 }
 \examples{
 \dontrun{
+library(nhdR)
+
 data(nhd_sub_lines)
 data(nhd_sub_lakes)
 
 outlet_reach   <- terminal_reaches(network = nhd_sub_lines,
                                    approve_all_dl = TRUE)
-outlet <- which(outlet_reach$comid == nhd_sub_lines$comid)
-
+outlet <- which(outlet_reach[['comid']] == nhd_sub_lines[['comid']])
 
 closest_lake_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
 }

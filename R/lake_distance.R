@@ -12,13 +12,14 @@
 #' @importFrom nhdR terminal_reaches
 #' @export
 #' @examples \dontrun{
+#' library(nhdR)
+#'
 #' data(nhd_sub_lines)
 #' data(nhd_sub_lakes)
 #'
 #' outlet_reach   <- terminal_reaches(network = nhd_sub_lines,
 #'                                    approve_all_dl = TRUE)
-#' outlet <- which(outlet_reach$comid == nhd_sub_lines$comid)
-#'
+#' outlet <- which(outlet_reach[['comid']] == nhd_sub_lines[['comid']])
 #'
 #' closest_lake_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
 #' }
@@ -39,8 +40,8 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
   t_reach_pnts <- st_line_sample(t_reaches, sample = c(1))
   t_reach_pnts <- st_cast(t_reach_pnts, "POINT")
 
-  outlet_reach_ind <- which(t_reaches$comid ==
-                              data.frame(lines)[outlet, "comid"])
+  outlet_reach_ind <- which(t_reaches[["comid"]] ==
+                              lines[["comid"]][outlet])
 
   if(length(outlet_reach_ind) > 0){
     outlet_reach <- t_reach_pnts[outlet_reach_ind]
