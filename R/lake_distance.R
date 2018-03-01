@@ -25,6 +25,7 @@
 #' }
 closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                                   map = FALSE){
+
   # filter lakes by size threshold
   lakes <- lakes[st_area(lakes) >
                    units::as_units(size_threshold, "ha"),]
@@ -51,8 +52,9 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
     }else{ #probably a one-off error
       outlet_reach   <- terminal_reaches(network = lines,
                                          approve_all_dl = TRUE, quiet = TRUE)
-      outlet_reach <- t_reach_pnts[which.min(
-          st_distance(t_reach_pnts, outlet_reach))]
+
+      outlet_reach <- t_reach_pnts[
+        which.min(apply(st_distance(outlet_reach, t_reach_pnts), 2, min))]
 
       t_reach_pnts <- t_reach_pnts[
         !(seq_len(length(t_reach_pnts)) %in%
