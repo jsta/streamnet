@@ -12,8 +12,6 @@ calc_metrics(lines, lakes, map = FALSE)
 \item{lakes}{sf polygon object}
 
 \item{map}{logical show a map output of the results?}
-
-\item{focal_coords}{numeric vector of length 2}
 }
 \description{
 Calculate connectivity metrics
@@ -30,7 +28,6 @@ res <- calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 # don't error if lines is only one row
 calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
 
-coords <- c(-95.1331, 43.38921)
 
 }
 }

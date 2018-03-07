@@ -21,7 +21,6 @@ NULL
 #' Calculate connectivity metrics
 #'
 #' @inheritParams closest_lake_distance
-#' @param focal_coords numeric vector of length 2
 #' @export
 #'
 #' @examples \dontrun{
@@ -66,15 +65,22 @@ calc_metrics <- function(lines, lakes, map = FALSE){
 
     # distance to closest upstream lake
     # number of upsream lakes
+    # area of upstream lakes
     if(nrow(lines) > 1){
       cld <- closest_lake_distance(lines, lakes, outlet = outlet)
       res$closest_lake_distance <- cld$closest_lake_distance
       res$num_up_lakes          <- cld$num_up_lakes
+      res$lake_area             <- cld$lake_area
     }else{
-      res$closest_lake_distance <- res$num_up_lakes <- NA
+      res$closest_lake_distance <-
+        res$num_up_lakes <-
+        res$lake_area <- NA
     }
   }else{
-    res$closest_lake_distance <- res$num_up_lakes <- res$stream_order_ratio <-
+    res$closest_lake_distance <-
+      res$num_up_lakes <-
+      res$lake_area <-
+      res$stream_order_ratio <-
       res$avg_link_length <- NA
   }
 

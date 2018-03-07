@@ -2,7 +2,7 @@
 % Please edit documentation in R/lake_distance.R
 \name{closest_lake_distance}
 \alias{closest_lake_distance}
-\title{Find the distance to the closest upstream lake}
+\title{Find the distance to the closest upstream lake, the number of upstream lakes, and the area of upstream lakes}
 \usage{
 closest_lake_distance(lines, lakes, outlet, size_threshold = 4, map = FALSE)
 }
@@ -18,7 +18,7 @@ closest_lake_distance(lines, lakes, outlet, size_threshold = 4, map = FALSE)
 \item{map}{logical show a map output of the results?}
 }
 \description{
-Find the distance to the closest upstream lake
+Find the distance to the closest upstream lake, the number of upstream lakes, and the area of upstream lakes
 }
 \examples{
 \dontrun{

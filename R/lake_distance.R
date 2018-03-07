@@ -1,4 +1,4 @@
-#' Find the distance to the closest upstream lake
+#' Find the distance to the closest upstream lake, the number of upstream lakes, and the area of upstream lakes
 #'
 #' @param lines sf lines object
 #' @param lakes sf polygon object
@@ -27,9 +27,11 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                                   map = FALSE){
 
   # filter lakes by size threshold
-  lakes <- lakes[st_area(lakes) >
+  lakes     <- lakes[st_area(lakes) >
                    units::as_units(size_threshold, "ha"),]
-  lakes <- st_transform(lakes, st_crs(lines))
+  lakes     <- st_transform(lakes, st_crs(lines))
+  lake_area <- sum(st_area(lakes))
+  units(lake_area) <- "ha"
 
   # extract lakes that intersect lines
   lakes <- lakes[
@@ -135,10 +137,12 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
 
     list(
       closest_lake_distance = min(res$dist),
-      num_up_lakes          = length(t_reach_pnts))
+      num_up_lakes          = length(t_reach_pnts),
+      lake_area             = lake_area)
   }else{
     list(
       closest_lake_distance = NA,
-      num_up_lakes          = NA)
+      num_up_lakes          = NA,
+      lake_area             = NA)
   }
 }
