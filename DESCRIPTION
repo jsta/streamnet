@@ -6,11 +6,12 @@ Authors@R: person("Joseph", "Stachelek", role = c("aut", "cre"),
  comment = c(ORCID = "0000-0002-5924-2464"))
 Description: Morphology analysis of stream networks. 
 Depends: R (>= 3.4.1)
-Imports: nhdR, igraph, sf, dplyr, spnetwork, sp, units, riverdist, methods, raster, rgrass7sf, hydrolinks, purrr, DBI, RSQLite
+Imports: nhdR, igraph, sf, dplyr, spnetwork, sp, units, riverdist, methods, raster, rgrass7sf, hydrolinks, purrr, DBI, RSQLite,
+    Rcpp
 Remotes: jsta/rgrass7sf
 Suggests: mapview, concaveman
 License: GPL
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-
+LinkingTo: Rcpp

@@ -2,6 +2,8 @@
 #'
 #' @name streamnet
 #' @docType package
+#' @useDynLib streamnet
+#' @importFrom Rcpp sourceCpp
 NULL
 
 #' nhd_sub_lines
