@@ -1,18 +1,18 @@
 #' sim_dla
 #'
 #' @export
-#' @import stats runif
+#' @importFrom stats runif
 #' @examples \dontrun{
 #' raster::image(sim_dla())
 #' }
 sim_dla <- function(){
-
-  res <- list()
-  max  <- 40000      #             /* number of iterations  */
-  size <- 401        #              /* size of grid array  */
+  res  <- list()
+  max  <- 40000      # /* number of iterations  */
+  size <- 401        # /* size of grid array  */
   seed <- 68111			 # /* seed for number generator */
   rad  <- 180
-  old <<-  0
+  old  <- 0
+  mem  <- NULL
 
   gauss_ran <- function(){
     calc_rr <- function(){
@@ -36,8 +36,8 @@ sim_dla <- function(){
       }
 
       fac <- sqrt(-2 * log(rr) / rr)
-      mem <<- 5000 * r1 * fac #     /* save for next call */
-      old <<- 1               #     /* set flag */
+      mem <<- 5000 * r1 * fac # /* save for next call */
+      old <<- 1               # /* set flag */
 
       return(as.integer(5000 * r2 * fac))
     }else{
@@ -52,17 +52,14 @@ sim_dla <- function(){
   grid[200, 200] <- 1	 #		/* one particle at the center */
   # set.seed(seed)
 
-  # raster::image(grid)
-
   for(i in 0:(max - 1)){
     # i <- 0
-
     hit   <- 0
-    angle <- (2 * pi * runif(1))  #		/* random angle */
-    x     <- as.integer(200 + rad * cos(angle)) #     /* coordinates */
+    angle <- (2 * pi * runif(1))                #	random angle */
+    x     <- as.integer(200 + rad * cos(angle)) # coordinates */
     y     <- as.integer(200 + rad * sin(angle))
 
-    dist  <- gauss_ran() # 	/* random number gaussian dist. */
+    dist  <- gauss_ran()                        # random number gaussian dist. */
 
     if(dist < 0){
       step <- -1
@@ -77,8 +74,8 @@ sim_dla <- function(){
          grid[x - 1,y] +
          grid[x, y + 1] +
          grid[x, y - 1] >= 1){
-        hit <- 1        #    /* one neighbor is occupied */
-        grid[x,y] <- 1  #    /* particle sticks, walk is over */
+          hit <- 1        #    /* one neighbor is occupied */
+          grid[x,y] <- 1  #    /* particle sticks, walk is over */
       }else{
         if(runif(1) < 0.5){
           x <- x + step #      /* move horizontally */
