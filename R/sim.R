@@ -97,3 +97,23 @@ sim_dla <- function(){
 
   grid[min_grid:max_grid, min_grid:max_grid]
 }
+
+#' Vizualize the dla simulation
+#'
+#' @param r raster made from output of sim_dla
+#'
+#' @export
+#'
+#' @examples \dontrun{
+#' dt <- sim_dla()
+#' viz_dla(raster(dt), which.max(dt))
+#' image(dt)
+#' }
+viz_dla <- function(r, origin){
+  r   <- raster::flip(r, "x")
+  r   <- raster::flip(r, "y")
+  res <- raster2network(r, origin)
+
+  # plot(res)
+  mapview::mapview(res)
+}

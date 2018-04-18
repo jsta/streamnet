@@ -1,3 +1,77 @@
+#' Convert a raster to stream network
+#'
+#' @param r raster
+#' @param origin index
+#'
+#' @importFrom raster flip as.matrix
+#' @importFrom sf st_polygon st_relate st_linestring
+#' @importFrom igraph graph_from_data_frame shortest_paths
+#' @export
+#'
+#' @examples \dontrun{
+#' library(raster)
+#'
+#' foo <- matrix(0,ncol=9,nrow=9)
+#' foo[1:4,3] <- 1
+#' foo[5,4] <- 1
+#' foo[6:9,5] <- 1
+#' foo <- raster(foo)
+#' origin <- which.min(apply(
+#'              which(as.matrix(flip(foo, "y")) == 1, arr.ind = TRUE), 1, sum))
+#' res <- raster2network(foo, origin)
+#'
+#' mapview::mapview(res)
+#' }
+raster2network <- function(r, origin){
+
+  st_rook    <- function(a, b = a) st_relate(a, b, pattern = "F***1****")
+  st_queen   <- function(a, b = a) st_relate(a, b, pattern = "F***T****")
+
+  boxify     <- function(x){# turn into polygon grid with dt as centerpoints
+    # x <- as.numeric(x)
+    st_polygon(
+      list(
+        rbind(x - 0.5,
+              c(x[1] + 0.5, x[2] - 0.5),
+              x + 0.5,
+              c(x[1] - 0.5, x[2] + 0.5),
+              x - 0.5)
+      )
+    )
+  }
+
+  to_igraph  <- function(dt_poly){
+    res <- unclass(st_queen(dt_poly))
+    res <- setNames(res, seq_len(length(res)))
+    res <- utils::stack(res)
+    names(res) <- c("from", "to")
+
+    graph_from_data_frame(res)
+  }
+
+  to_network <- function(dt_ig, dt_origin, dt_pts){
+    path_nodes <- lapply(names(V(dt_ig)), function(x) {
+      res_paths <- shortest_paths(dt_ig, from = x, to = as.character(dt_origin))
+      as.numeric(names(unclass(res_paths$vpath)[[1]]))
+    })
+
+    path_lines <- st_sfc(
+      lapply(seq_len(length(path_nodes)),
+        function(x) st_linestring(st_coordinates(dt_pts[path_nodes[[x]],]))))
+    path_lines <- path_lines[which(st_length(path_lines) > 0)]
+
+    st_cast(st_line_merge(st_union(st_cast(path_lines, "MULTILINESTRING"))),
+            "LINESTRING")
+  }
+
+  dt        <- data.frame(which(raster::as.matrix(flip(r, "y")) == 1, arr.ind = TRUE))
+  dt_pts    <- st_as_sf(dt, coords = c("col", "row"))
+  dt_poly   <- st_sfc(apply(dt, 1, function(x) boxify(x)))
+  dt_ig     <- to_igraph(dt_poly)
+
+  to_network(dt_ig, origin, dt_pts)
+}
+
 #' Create a reversed tree igraph object
 #'
 #' @param node_n number of nodes
