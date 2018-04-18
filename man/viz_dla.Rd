@@ -8,6 +8,8 @@ viz_dla(r, origin)
 }
 \arguments{
 \item{r}{raster made from output of sim_dla}
+
+\item{origin}{integer index of network origin}
 }
 \description{
 Vizualize the dla simulation

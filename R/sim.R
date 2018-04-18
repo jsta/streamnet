@@ -101,7 +101,9 @@ sim_dla <- function(){
 #' Vizualize the dla simulation
 #'
 #' @param r raster made from output of sim_dla
+#' @param origin integer index of network origin
 #'
+#' @importFrom raster raster t
 #' @export
 #'
 #' @examples \dontrun{
@@ -110,8 +112,7 @@ sim_dla <- function(){
 #' image(dt)
 #' }
 viz_dla <- function(r, origin){
-  r   <- raster::flip(r, "x")
-  r   <- raster::flip(r, "y")
+  r   <- flip(raster::t(raster::raster(dt)), "y")
   res <- raster2network(r, origin)
 
   # plot(res)

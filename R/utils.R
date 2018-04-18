@@ -6,6 +6,7 @@
 #' @importFrom raster flip as.matrix
 #' @importFrom sf st_polygon st_relate st_linestring
 #' @importFrom igraph graph_from_data_frame shortest_paths
+#' @importFrom stats setNames
 #' @export
 #'
 #' @examples \dontrun{
