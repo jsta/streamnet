@@ -112,7 +112,7 @@ sim_dla <- function(){
 #' image(dt)
 #' }
 viz_dla <- function(r, origin){
-  r   <- flip(raster::t(raster::raster(dt)), "y")
+  r   <- flip(raster::t(raster::raster(r)), "y")
   res <- raster2network(r, origin)
 
   # plot(res)
