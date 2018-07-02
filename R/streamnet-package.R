@@ -22,6 +22,13 @@ NULL
 
 #' Calculate connectivity metrics
 #'
+#' @return a list with the following elements:
+#'  * Average link length
+#'  * Stream order ratio
+#'  * Closest lake distance
+#'  * Number of upstream lakes
+#'  * Upstream lake area
+#'
 #' @inheritParams closest_lake_distance
 #' @export
 #'
@@ -35,10 +42,6 @@ NULL
 #'
 #' # don't error if lines is only one row
 #' calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
-#'
-# lines <- readRDS("/home/jose/Documents/Science/Dissertation/Analysis/lines.rds")
-# lakes <- readRDS("/home/jose/Documents/Science/Dissertation/Analysis/lakes.rds")
-# calc_metrics(lines, lakes)
 #'
 #' }
 calc_metrics <- function(lines, lakes, map = FALSE){

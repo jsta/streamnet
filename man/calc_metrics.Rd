@@ -13,6 +13,16 @@ calc_metrics(lines, lakes, map = FALSE)
 
 \item{map}{logical show a map output of the results?}
 }
+\value{
+a list with the following elements:
+\itemize{
+\item Average link length
+\item Stream order ratio
+\item Closest lake distance
+\item Number of upstream lakes
+\item Upstream lake area
+}
+}
 \description{
 Calculate connectivity metrics
 }
@@ -27,7 +37,6 @@ res <- calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 
 # don't error if lines is only one row
 calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
-
 
 }
 }
