@@ -26,6 +26,9 @@ a list with the following elements:
 \description{
 Calculate connectivity metrics
 }
+\details{
+The units returned depend on the data source. Check with \code{sf::st_crs}.
+}
 \examples{
 \dontrun{
 

@@ -29,6 +29,8 @@ NULL
 #'  * Number of upstream lakes
 #'  * Upstream lake area
 #'
+#' @details The units returned depend on the data source. Check with `sf::st_crs`.
+#'
 #' @inheritParams closest_lake_distance
 #' @export
 #'
