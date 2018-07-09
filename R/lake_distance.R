@@ -179,24 +179,24 @@ network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
                                       v.in.ogr_flags = c("o", "overwrite"),
                                       ignore.stderr = TRUE), file = tempfile())
 
-  rgrass7sf::execGRASS("v.clean",
+  capture.output(rgrass7sf::execGRASS("v.clean",
                        parameters = list(
                          tool = "snap",
                          input = "testlines",
                          output = "testlines2",
                          threshold = 0.0001),
-                       flags = c("c", "overwrite"))
+                       flags = c("c", "overwrite")))
 
 
-  rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
+  capture.output(rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
                        v.in.ogr_flags = c("o", "overwrite"),
-                       ignore.stderr = TRUE)
+                       ignore.stderr = TRUE))
 
-  rgrass7sf::writeVECT(outlet_reach, "outpnt"  ,
+  capture.output(rgrass7sf::writeVECT(outlet_reach, "outpnt"  ,
                        v.in.ogr_flags = c("o", "overwrite"),
-                       ignore.stderr = TRUE)
+                       ignore.stderr = TRUE))
 
-  rgrass7sf::execGRASS("v.net",
+  capture.output(rgrass7sf::execGRASS("v.net",
                        parameters = list(
                          input = "testlines2",
                          points = "treachpnts",
@@ -206,9 +206,9 @@ network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
                          arc_layer = "1",
                          node_layer = "2"
                        ),
-                       flags = c("overwrite"))
+                       flags = c("overwrite")))
 
-  rgrass7sf::execGRASS("v.net",
+  capture.output(rgrass7sf::execGRASS("v.net",
                        parameters = list(
                          input = "linesnet",
                          points = "outpnt",
@@ -218,16 +218,16 @@ network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
                          arc_layer = "1",
                          node_layer = "3"
                        ),
-                       flags = c("overwrite"))
+                       flags = c("overwrite")))
 
-  rgrass7sf::execGRASS("v.net.distance",
+  capture.output(rgrass7sf::execGRASS("v.net.distance",
                        parameters = list(
                          input = "linesnet2",
                          output = "dist2out",
                          from_layer = "2",
                          to_layer = "3"
                        ),
-                       flags = c("quiet", "overwrite"))
+                       flags = c("quiet", "overwrite")))
 
   capture.output(res <- rgrass7sf::execGRASS("v.report",
                                              parameters = list(
