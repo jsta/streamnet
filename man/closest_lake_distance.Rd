@@ -17,6 +17,14 @@ closest_lake_distance(lines, lakes, outlet, size_threshold = 4, map = FALSE)
 
 \item{map}{logical show a map output of the results?}
 }
+\value{
+a list with the following elements:
+\itemize{
+\item Closest lake distance
+\item Number of upstream lakes
+\item Upstream lake area
+}
+}
 \description{
 Find the distance to the closest upstream lake, the number of upstream lakes, and the area of upstream lakes
 }
