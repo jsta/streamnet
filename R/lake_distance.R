@@ -32,9 +32,47 @@
 closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                                   map = FALSE){
 
+  res <- get_network_distance(lines, lakes, outlet, size_threshold)
+
+  if(!all(is.na(res))){
+    if(map){
+      plot(st_sf(data.frame(dist = res$dist),
+                    st_sfc(st_geometry(t_reach_pnts))))
+    }
+
+    list(
+      closest_lake_distance = min(res$dist),
+      num_up_lakes          = length(res$t_reach_pnts),
+      lake_area             = res$lake_area)
+  }else{
+    list(
+      closest_lake_distance = NA,
+      num_up_lakes          = NA,
+      lake_area             = NA)
+  }
+}
+
+#' Get the network distance matrix between a set of points on a line network
+#'
+#' @inheritParams closest_lake_distance
+#'
+#' @examples \dontrun{
+#' #' library(nhdR)
+#'
+#' data(nhd_sub_lines)
+#' data(nhd_sub_lakes)
+#'
+#' outlet_reach   <- terminal_reaches(network = nhd_sub_lines,
+#'                                    approve_all_dl = TRUE)
+#' outlet <- which(outlet_reach[['comid']] == nhd_sub_lines[['comid']])
+#'
+#' get_network_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
+#' }
+#'
+get_network_distance <- function(lines, lakes, outlet, size_threshold = 4){
   # filter lakes by size threshold
   lakes     <- lakes[st_area(lakes) >
-                   units::as_units(size_threshold, "ha"),]
+                       units::as_units(size_threshold, "ha"),]
   lakes     <- st_transform(lakes, st_crs(lines))
   lake_area <- sum(st_area(lakes))
   units(lake_area) <- "ha"
@@ -66,7 +104,7 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
 
       t_reach_pnts <- t_reach_pnts[
         !(seq_len(length(t_reach_pnts)) %in%
-        which.min(st_distance(outlet_reach, t_reach_pnts)))]
+            which.min(st_distance(outlet_reach, t_reach_pnts)))]
     }
 
     # library(mapview)
@@ -76,8 +114,8 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
     grass_setup(lines)
 
     capture.output(rgrass7sf::writeVECT(lines, "testlines",
-                         v.in.ogr_flags = c("o", "overwrite"),
-                         ignore.stderr = TRUE), file = tempfile())
+                                        v.in.ogr_flags = c("o", "overwrite"),
+                                        ignore.stderr = TRUE), file = tempfile())
 
     rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
                          v.in.ogr_flags = c("o", "overwrite"),
@@ -124,31 +162,27 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
                            output = "dist2out",
                            from_layer = "2",
                            to_layer = "3"
-                           ),
+                         ),
                          flags = c("quiet", "overwrite"))
 
     capture.output(res <- rgrass7sf::execGRASS("v.report",
-                         parameters = list(
-                           map = "dist2out",
-                           option = "length"
-                         ),
-                         flags = c("quiet"), echoCmd = FALSE), file = tempfile())
+                                               parameters = list(
+                                                 map = "dist2out",
+                                                 option = "length"
+                                               ),
+                                               flags = c("quiet"), echoCmd = FALSE), file = tempfile())
 
     res <- read.csv(textConnection(attr(res, "resOut")), sep = "|")
 
-    if(map){
-      plot(st_sf(data.frame(dist = res$dist),
-                    st_sfc(st_geometry(t_reach_pnts))))
-    }
+    list(dist = res,
+         t_reach_pnts = t_reach_pnts,
+         lake_area = lake_area
+         )
 
-    list(
-      closest_lake_distance = min(res$dist),
-      num_up_lakes          = length(t_reach_pnts),
-      lake_area             = lake_area)
   }else{
-    list(
-      closest_lake_distance = NA,
-      num_up_lakes          = NA,
-      lake_area             = NA)
+    list(dist = NA,
+         t_reach_pnts = NA,
+         lake_area = NA
+    )
   }
 }
