@@ -29,7 +29,8 @@ outlet_reach   <- terminal_reaches(network = nhd_sub_lines,
                                    approve_all_dl = TRUE)
 outlet <- which(outlet_reach[['comid']] == nhd_sub_lines[['comid']])
 
-get_network_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
+get_focal_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
+
 }
 
 }

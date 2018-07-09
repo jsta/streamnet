@@ -37,7 +37,7 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
   if(!all(is.na(res))){
     if(map){
       plot(st_sf(data.frame(dist = res$dist),
-                    st_sfc(st_geometry(t_reach_pnts))))
+                    st_sfc(st_geometry(res$t_reach_pnts))))
     }
 
     list(
@@ -68,7 +68,8 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
 #'                                    approve_all_dl = TRUE)
 #' outlet <- which(outlet_reach[['comid']] == nhd_sub_lines[['comid']])
 #'
-#' get_network_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
+#' get_focal_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
+#'
 #' }
 #'
 get_focal_distance <- function(lines, lakes, outlet, size_threshold = 4){
@@ -85,6 +86,8 @@ get_focal_distance <- function(lines, lakes, outlet, size_threshold = 4){
 
   # find terminal reach of each lake and terminal reach of focal lake
   t_reaches    <- terminal_reaches(network = lines, lakewise = TRUE, quiet = TRUE)
+  t_reaches <- t_reaches[do.call(pmin, as.data.frame( #rowMins
+    st_distance(t_reaches, lakes))) < units::as_units(1, "m"),]
 
   t_reach_pnts <- st_line_sample(t_reaches, sample = c(1))
   t_reach_pnts <- st_cast(t_reach_pnts, "POINT")
@@ -108,6 +111,10 @@ get_focal_distance <- function(lines, lakes, outlet, size_threshold = 4){
         !(seq_len(length(t_reach_pnts)) %in%
             which.min(st_distance(outlet_reach, t_reach_pnts)))]
     }
+
+    # browser()
+    # mapview(lines) + mapview(lakes) +
+    #   mapview(t_reach_pnts) +  mapview(outlet_reach, color = "red")
 
     res <- network_distance_focal(lines, t_reach_pnts, outlet_reach)
 
@@ -164,12 +171,22 @@ get_mat_distance <- function(lines, lakes, size_threshold = 4){
 }
 
 network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
+
   # use GRASS v.net.distance to calculate network distances
   grass_setup(lines)
 
   capture.output(rgrass7sf::writeVECT(lines, "testlines",
                                       v.in.ogr_flags = c("o", "overwrite"),
                                       ignore.stderr = TRUE), file = tempfile())
+
+  rgrass7sf::execGRASS("v.clean",
+                       parameters = list(
+                         tool = "snap",
+                         input = "testlines",
+                         output = "testlines2",
+                         threshold = 0.0001),
+                       flags = c("c", "overwrite"))
+
 
   rgrass7sf::writeVECT(t_reach_pnts, "treachpnts",
                        v.in.ogr_flags = c("o", "overwrite"),
@@ -181,7 +198,7 @@ network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
 
   rgrass7sf::execGRASS("v.net",
                        parameters = list(
-                         input = "testlines",
+                         input = "testlines2",
                          points = "treachpnts",
                          output = "linesnet",
                          operation = "connect",
@@ -189,7 +206,7 @@ network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
                          arc_layer = "1",
                          node_layer = "2"
                        ),
-                       flags = c("quiet", "overwrite"))
+                       flags = c("overwrite"))
 
   rgrass7sf::execGRASS("v.net",
                        parameters = list(
@@ -197,11 +214,11 @@ network_distance_focal <- function(lines, t_reach_pnts, outlet_reach){
                          points = "outpnt",
                          output = "linesnet2",
                          operation = "connect",
-                         threshold = 400,
+                         threshold = 1000,
                          arc_layer = "1",
                          node_layer = "3"
                        ),
-                       flags = c("quiet", "overwrite"))
+                       flags = c("overwrite"))
 
   rgrass7sf::execGRASS("v.net.distance",
                        parameters = list(
