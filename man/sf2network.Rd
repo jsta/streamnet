@@ -2,7 +2,7 @@
 % Please edit documentation in R/spnetwork.R
 \name{sf2network}
 \alias{sf2network}
-\title{Convert sf to SpatialNetwork}
+\title{Convert sf lines to SpatialNetwork}
 \usage{
 sf2network(sf_lines)
 }
@@ -10,15 +10,12 @@ sf2network(sf_lines)
 \item{sf_lines}{sf lines object}
 }
 \description{
-Convert sf to SpatialNetwork
+Convert sf lines to SpatialNetwork
 }
 \examples{
 \dontrun{
-# library(igraph)
-# library(sp)
-# library(mapview)
-data(nhd_sub)
-res <- sf2network(nhd_sub)
-plot(res@g)
+data(nhd_sub_lines)
+res <- sf2network(nhd_sub_lines)
+plot(res)
 }
 }
