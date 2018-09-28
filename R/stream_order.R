@@ -37,8 +37,8 @@ stream_order <- function(lines, outlet, ...){
                        v.in.ogr_flags = c("o", "overwrite"),
                        ignore.stderr = TRUE)
 
-  print(outlet)
-  print(lines)
+  # print(outlet)
+  # print(lines)
 
   rgrass7sf::execGRASS("v.stream.order",
             parameters = list(
