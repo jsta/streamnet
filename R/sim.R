@@ -108,13 +108,13 @@ sim_dla <- function(){
 #'
 #' @examples \dontrun{
 #' dt <- sim_dla()
-#' viz_dla(raster(dt), which.max(dt))
+#' viz_dla(dt, which.max(dt))
 #' image(dt)
 #' }
 viz_dla <- function(r, origin){
   r   <- flip(raster::t(raster::raster(r)), "y")
   res <- raster2network(r, origin)
 
-  # plot(res)
-  mapview::mapview(res)
+  plot(res)
+  # mapview::mapview(res)
 }

@@ -17,7 +17,7 @@ Vizualize a DLA simulation
 \examples{
 \dontrun{
 dt <- sim_dla()
-viz_dla(raster(dt), which.max(dt))
+viz_dla(dt, which.max(dt))
 image(dt)
 }
 }
