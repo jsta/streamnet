@@ -1,4 +1,4 @@
-#' sim_dla
+#' Simulate diffusion limited aggregation
 #'
 #' @export
 #' @importFrom stats runif
@@ -98,7 +98,7 @@ sim_dla <- function(){
   grid[min_grid:max_grid, min_grid:max_grid]
 }
 
-#' Vizualize the dla simulation
+#' Vizualize a DLA simulation
 #'
 #' @param r raster made from output of sim_dla
 #' @param origin integer index of network origin

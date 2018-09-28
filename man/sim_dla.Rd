@@ -2,12 +2,12 @@
 % Please edit documentation in R/sim.R
 \name{sim_dla}
 \alias{sim_dla}
-\title{sim_dla}
+\title{Simulate diffusion limited aggregation}
 \usage{
 sim_dla()
 }
 \description{
-sim_dla
+Simulate diffusion limited aggregation
 }
 \examples{
 \dontrun{

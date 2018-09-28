@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim.R
 \name{viz_dla}
 \alias{viz_dla}
-\title{Vizualize the dla simulation}
+\title{Vizualize a DLA simulation}
 \usage{
 viz_dla(r, origin)
 }
@@ -12,7 +12,7 @@ viz_dla(r, origin)
 \item{origin}{integer index of network origin}
 }
 \description{
-Vizualize the dla simulation
+Vizualize a DLA simulation
 }
 \examples{
 \dontrun{
