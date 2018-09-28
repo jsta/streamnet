@@ -14,6 +14,9 @@ knitr::opts_chunk$set(
 
 # streamnet
 
+[![CRAN status](https://www.r-pkg.org/badges/version/streamnet)](https://cran.r-project.org/package=streamnet)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+
 Morphology analysis of stream networks 
 
 ## Installation

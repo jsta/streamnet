@@ -1,12 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-streamnet
-=========
+
+# streamnet
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/streamnet)](https://cran.r-project.org/package=streamnet)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 Morphology analysis of stream networks
 
-Installation
-------------
+## Installation
 
 You can install streamnet from github with:
 
@@ -15,8 +19,7 @@ You can install streamnet from github with:
 devtools::install_github("jsta/streamnet")
 ```
 
-Usage
------
+## Usage
 
 ``` r
 library(sf)
@@ -56,10 +59,13 @@ stream_order_ratio(nhd_sub_lines, outlet = outlet_point)
 outlet <- which(outlet_reach$comid == nhd_sub_lines$comid)
 closest_lake_distance(nhd_sub_lines, nhd_sub_lakes, outlet = outlet)
 #> $closest_lake_distance
-#> [1] 17861.86
+#> [1] 1
 #> 
 #> $num_up_lakes
 #> [1] 82
+#> 
+#> $lake_area
+#> 13091.8 ha
 
 # all together now
 calc_metrics(nhd_sub_lines, nhd_sub_lakes)
@@ -72,8 +78,11 @@ calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 #> [1] 0.5478762
 #> 
 #> $closest_lake_distance
-#> [1] 17861.86
+#> [1] 1
 #> 
 #> $num_up_lakes
 #> [1] 82
+#> 
+#> $lake_area
+#> 13091.8 ha
 ```
