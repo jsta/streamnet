@@ -106,7 +106,7 @@ grass_path <- function(){
 
 grass_setup <- function(lines, ...){
 
-  lines_sp <- SpatialLinesDataFrame(as_Spatial(st_geometry(lines)),
+  lines_sp <- SpatialLinesDataFrame(as_Spatial(sf::st_geometry(lines)),
                                     data = as.data.frame(lines),
                                     match.ID = FALSE)
 

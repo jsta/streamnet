@@ -13,7 +13,7 @@
 #'
 #' @importFrom utils read.csv capture.output
 #' @importFrom graphics plot
-#' @importFrom sf st_area st_intersects st_transform
+#' @importFrom sf st_area st_intersects st_transform st_geometry
 #' @importFrom nhdR terminal_reaches
 #' @export
 #'
