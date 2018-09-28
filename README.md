@@ -7,6 +7,8 @@
 status](https://www.r-pkg.org/badges/version/streamnet)](https://cran.r-project.org/package=streamnet)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Travis-CI Build
+Status](https://travis-ci.org/jsta/streamnet.svg?branch=master)](https://travis-ci.org/jsta/streamnet)
 
 Morphology analysis of stream networks
 
