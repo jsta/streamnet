@@ -8,7 +8,8 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "inst/images/"
+  fig.path = "inst/images/",
+  eval = FALSE
 )
 ```
 
@@ -45,7 +46,7 @@ library(ggplot2)
 library(raster)
 ```
 
-```{r calc_metrics, message=FALSE, eval=TRUE, warning=FALSE}
+```{r calc_metrics, message=FALSE, warning=FALSE}
 data(nhd_sub_lines)
 data(nhd_sub_lakes)
 
@@ -64,7 +65,7 @@ calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 
 ### Simplify stream networks
 
-```{r simplify_networks}
+```{r simplify_networks, eval=FALSE}
 # Combine(dissolve) adjacent reaches with no junctions
 nhd_sub_simple <- simplify_network(nhd_sub_lines)
 avg_link_length(nhd_sub_simple)
@@ -73,7 +74,7 @@ avg_link_length(nhd_sub_lines)
 
 ### Round-trip igraph and sf lines
 
-```{r igraph_v_sf}
+```{r igraph_v_sf, eval=FALSE}
 tree <- create_reversed_tree(15)
 class(tree)
 plot(tree)
@@ -94,7 +95,7 @@ viz_dla(dt, which.max(dt))
 knitr::include_graphics("inst/images/show_dla.png")
 ```
 
-```{r viz_bin_raster}
+```{r viz_bin_raster, eval=TRUE}
 # Generate from a binary raster
 foo <- matrix(0, ncol = 9, nrow = 9)
 foo[1:4,3] <- 1

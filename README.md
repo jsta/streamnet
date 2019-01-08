@@ -46,29 +46,8 @@ ggplot() +
   geom_sf(data = outlet_point, aes(color = "red")) +
   scale_color_manual(labels = "outlet", values = "red") +
   labs(colour = "") + theme_minimal()
-```
-
-![](inst/images/calc_metrics-1.png)<!-- -->
-
-``` r
 
 calc_metrics(nhd_sub_lines, nhd_sub_lakes)
-#> WARNING: Column name conflict: Renaming column <cat> from input map into
-#>          cat_1 in output map
-#> $avg_link_length
-#> 2444.693 m
-#> 
-#> $stream_order_ratio
-#> [1] 0.5478762
-#> 
-#> $closest_lake_distance
-#> [1] 1
-#> 
-#> $num_up_lakes
-#> [1] 82
-#> 
-#> $lake_area
-#> 13091.8 ha
 ```
 
 ### Simplify stream networks
@@ -77,9 +56,7 @@ calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 # Combine(dissolve) adjacent reaches with no junctions
 nhd_sub_simple <- simplify_network(nhd_sub_lines)
 avg_link_length(nhd_sub_simple)
-#> 2444.693 m
 avg_link_length(nhd_sub_lines)
-#> 1312.988 m
 ```
 
 ### Round-trip igraph and sf lines
@@ -87,19 +64,11 @@ avg_link_length(nhd_sub_lines)
 ``` r
 tree <- create_reversed_tree(15)
 class(tree)
-#> [1] "igraph"
 plot(tree)
-```
-
-![](inst/images/igraph_v_sf-1.png)<!-- -->
-
-``` r
 
 tree_sf <- igraph2sf(tree)
 plot(tree_sf)
 ```
-
-![](inst/images/igraph_v_sf-2.png)<!-- -->
 
 ### Create synthetic stream networks
 
@@ -108,8 +77,6 @@ plot(tree_sf)
 dt <- sim_dla()
 viz_dla(dt, which.max(dt))
 ```
-
-![](inst/images/show_dla.png)<!-- -->
 
 ``` r
 # Generate from a binary raster
@@ -126,5 +93,3 @@ par(mfrow = c(1, 2))
 plot(foo)
 plot(foo); plot(res, add = TRUE)
 ```
-
-![](inst/images/viz_bin_raster-1.png)<!-- -->
