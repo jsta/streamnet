@@ -4,7 +4,8 @@
 \alias{closest_lake_distance}
 \title{Find the distance to the closest upstream lake, the number of upstream lakes, and the area of upstream lakes}
 \usage{
-closest_lake_distance(lines, lakes, outlet, size_threshold = 4, map = FALSE)
+closest_lake_distance(lines, lakes, outlet, size_threshold = 4,
+  map = FALSE)
 }
 \arguments{
 \item{lines}{sf lines object}
