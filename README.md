@@ -21,6 +21,12 @@ You can install streamnet from github with:
 devtools::install_github("jsta/streamnet")
 ```
 
+In addition, many functions require a system installation of
+[GRASS 7](https://grass.osgeo.org/) along with the
+[v.net](https://grass.osgeo.org/grass74/manuals/v.net.html) and
+[v.stream.order](https://grass.osgeo.org/grass74/manuals/addons/v.stream.order.html)
+extensions.
+
 ## Usage
 
 ### Calculate morphology metrics
@@ -53,10 +59,14 @@ calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 ### Simplify stream networks
 
 ``` r
+data(nhd_sub_lines)
+
 # Combine(dissolve) adjacent reaches with no junctions
 nhd_sub_simple <- simplify_network(nhd_sub_lines)
 avg_link_length(nhd_sub_simple)
+#> 2444.693 [m]
 avg_link_length(nhd_sub_lines)
+#> 1312.988 [m]
 ```
 
 ### Round-trip igraph and sf lines
@@ -64,11 +74,19 @@ avg_link_length(nhd_sub_lines)
 ``` r
 tree <- create_reversed_tree(15)
 class(tree)
+#> [1] "igraph"
 plot(tree)
+```
+
+![](inst/images/igraph_v_sf-1.png)<!-- -->
+
+``` r
 
 tree_sf <- igraph2sf(tree)
 plot(tree_sf)
 ```
+
+![](inst/images/igraph_v_sf-2.png)<!-- -->
 
 ### Create synthetic stream networks
 
@@ -77,6 +95,8 @@ plot(tree_sf)
 dt <- sim_dla()
 viz_dla(dt, which.max(dt))
 ```
+
+![](inst/images/show_dla.png)<!-- -->
 
 ``` r
 # Generate from a binary raster
@@ -93,3 +113,5 @@ par(mfrow = c(1, 2))
 plot(foo)
 plot(foo); plot(res, add = TRUE)
 ```
+
+![](inst/images/viz_bin_raster-1.png)<!-- -->

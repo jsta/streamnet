@@ -30,6 +30,8 @@ You can install streamnet from github with:
 devtools::install_github("jsta/streamnet")
 ```
 
+In addition, many functions require a system installation of [GRASS 7](https://grass.osgeo.org/) along with the [v.net](https://grass.osgeo.org/grass74/manuals/v.net.html) and [v.stream.order](https://grass.osgeo.org/grass74/manuals/addons/v.stream.order.html) extensions.
+
 ## Usage
 
 ### Calculate morphology metrics
@@ -46,7 +48,7 @@ library(ggplot2)
 library(raster)
 ```
 
-```{r calc_metrics, message=FALSE, warning=FALSE}
+```{r calc_metrics, message=FALSE, warning=FALSE, eval=FALSE}
 data(nhd_sub_lines)
 data(nhd_sub_lakes)
 
@@ -65,7 +67,9 @@ calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 
 ### Simplify stream networks
 
-```{r simplify_networks, eval=FALSE}
+```{r simplify_networks, eval=TRUE}
+data(nhd_sub_lines)
+
 # Combine(dissolve) adjacent reaches with no junctions
 nhd_sub_simple <- simplify_network(nhd_sub_lines)
 avg_link_length(nhd_sub_simple)
@@ -74,7 +78,7 @@ avg_link_length(nhd_sub_lines)
 
 ### Round-trip igraph and sf lines
 
-```{r igraph_v_sf, eval=FALSE}
+```{r igraph_v_sf, eval=TRUE}
 tree <- create_reversed_tree(15)
 class(tree)
 plot(tree)
@@ -91,7 +95,7 @@ dt <- sim_dla()
 viz_dla(dt, which.max(dt))
 ```
 
-```{r show_dla, echo=FALSE}
+```{r show_dla, echo=FALSE, eval=TRUE}
 knitr::include_graphics("inst/images/show_dla.png")
 ```
 
