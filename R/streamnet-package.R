@@ -40,7 +40,7 @@ NULL
 #' data(nhd_sub_lakes)
 #' coords <- c(lon = -73.17581, lat = 41.38634)
 #'
-#' res <- calc_metrics(nhd_sub_lines, nhd_sub_lakes)
+#' calc_metrics(nhd_sub_lines, nhd_sub_lakes)
 #'
 #' # don't error if lines is only one row
 #' calc_metrics(nhd_sub_lines[1,], nhd_sub_lakes)
