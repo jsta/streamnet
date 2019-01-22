@@ -135,3 +135,15 @@ grass_setup <- function(lines, ...){
   rgrass7sf::gmeta(ignore.stderr = TRUE)
 
 }
+
+install_grass_extensions <- function(){
+  tryCatch(rgrass7sf::initGRASS(gisBase = grass_path(),
+                                home = tempdir(),
+                                override = TRUE),
+           error = function(e) NULL)
+
+  rgrass7sf::execGRASS("g.extension",
+                       parameters = list(
+                         extension = "v.stream.order",
+                         operation = "add"))
+}
