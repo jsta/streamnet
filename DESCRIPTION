@@ -1,6 +1,6 @@
 Package: streamnet
 Title: Morphology Analysis of Stream Networks 
-Version: 0.1
+Version: 0.2.0
 Authors@R: person("Joseph", "Stachelek", role = c("aut", "cre"), 
  email = "stachel2@msu.edu", 
  comment = c(ORCID = "0000-0002-5924-2464"))
@@ -17,3 +17,4 @@ RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 LinkingTo: Rcpp
 SystemRequirements: GRASS (>= 7, v.stream.order, v.net)
+Language: en-US
