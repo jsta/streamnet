@@ -23,9 +23,11 @@ devtools::install_github("jsta/streamnet")
 
 In addition, many functions require a system installation of
 [GRASS 7](https://grass.osgeo.org/) along with the
-[v.net](https://grass.osgeo.org/grass74/manuals/v.net.html) and
 [v.stream.order](https://grass.osgeo.org/grass74/manuals/addons/v.stream.order.html)
-extensions.
+extension.
+
+There is a helper function to install `v.stream.order` at
+`streamnet:::install_grass_extensions`.
 
 ## Usage
 
