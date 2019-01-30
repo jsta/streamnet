@@ -41,7 +41,7 @@ closest_lake_distance <- function(lines, lakes, outlet, size_threshold = 4,
     }
 
     list(
-      closest_lake_distance = min(res$dist),
+      closest_lake_distance = min(res$dist$dist),
       num_up_lakes          = length(res$t_reach_pnts),
       lake_area             = res$lake_area)
   }else{
