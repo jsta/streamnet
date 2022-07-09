@@ -1,7 +1,7 @@
 Package: streamnet
 Title: Morphology Analysis of Stream Networks 
 Version: 0.2.0
-Authors@R: person("Joseph", "Stachelek", role = c("aut", "cre"), 
+Authors@R: person("Jemma", "Stachelek", role = c("aut", "cre"), 
  email = "stachel2@msu.edu", 
  comment = c(ORCID = "0000-0002-5924-2464"))
 Description: Morphology analysis of stream networks. 
