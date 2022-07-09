@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "inst/images/",
+  fig.path = "man/figures/",
   eval = FALSE
 )
 ```
@@ -100,7 +100,7 @@ viz_dla(dt, which.max(dt))
 ```
 
 ```{r show_dla, echo=FALSE, eval=TRUE}
-knitr::include_graphics("inst/images/show_dla.png")
+knitr::include_graphics("man/figures/show_dla.png")
 ```
 
 ```{r viz_bin_raster, eval=TRUE}

@@ -22,8 +22,8 @@ You can install streamnet from github with:
 devtools::install_github("jsta/streamnet")
 ```
 
-In addition, many functions require a system installation of
-[GRASS 7](https://grass.osgeo.org/) along with the
+In addition, many functions require a system installation of [GRASS
+7](https://grass.osgeo.org/) along with the
 [v.stream.order](https://grass.osgeo.org/grass74/manuals/addons/v.stream.order.html)
 extension.
 
@@ -81,15 +81,14 @@ class(tree)
 plot(tree)
 ```
 
-![](inst/images/igraph_v_sf-1.png)<!-- -->
+![](man/figures/igraph_v_sf-1.png)<!-- -->
 
 ``` r
-
 tree_sf <- igraph2sf(tree)
 plot(tree_sf)
 ```
 
-![](inst/images/igraph_v_sf-2.png)<!-- -->
+![](man/figures/igraph_v_sf-2.png)<!-- -->
 
 ### Create synthetic stream networks
 
@@ -99,7 +98,7 @@ dt <- sim_dla()
 viz_dla(dt, which.max(dt))
 ```
 
-![](inst/images/show_dla.png)<!-- -->
+![](man/figures/show_dla.png)<!-- -->
 
 ``` r
 # Generate from a binary raster
@@ -117,4 +116,4 @@ plot(foo)
 plot(foo); plot(res, add = TRUE)
 ```
 
-![](inst/images/viz_bin_raster-1.png)<!-- -->
+![](man/figures/viz_bin_raster-1.png)<!-- -->
